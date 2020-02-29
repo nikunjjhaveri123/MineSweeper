@@ -58,4 +58,4 @@ class Board:
               hiddenCells = 8
               if(i == 0 or j == 0)
                   hiddenCells = 3;
-              self.layout[i][j] = Cell(adjacentMineCount, 0, hiddenCells, 0)
+              self.layout[i][j] = Cell(adjacentMineCount, 0, hiddenCells, 0, 0, 0)
