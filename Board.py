@@ -12,8 +12,8 @@ class Board:
       mineLocations = random.sample(range(1, self.d*self.d), self.n)
 
       for i in mineLocations:
-          column = i // self.d
-          row = i % self.d
+          column = i % self.d
+          row = i // self.d
           self.layout[row][column] = -1
 
       for i in range(0, self.d):
