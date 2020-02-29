@@ -20,39 +20,39 @@ class Board:
           for j in range(0, self.d):
               adjacentMineCount = 0
 
-              if (self.layout[i][j] == -1):
+              if (self.layout[i][j].clue == -1):
                   continue
 
               if (i > 0):
-                  if (self.layout[i-1][j] == -1):
+                  if (self.layout[i-1][j].clue == -1):
                       adjacentMineCount += 1
 
               if (i < self.d - 1):
-                  if (self.layout[i+1][j] == -1):
+                  if (self.layout[i+1][j].clue == -1):
                       adjacentMineCount += 1
 
               if (j > 0):
-                  if (self.layout[i][j-1] == -1):
+                  if (self.layout[i][j-1].clue == -1):
                       adjacentMineCount += 1
 
               if (j < self.d - 1):
-                  if (self.layout[i][j+1] == -1):
+                  if (self.layout[i][j+1].clue == -1):
                       adjacentMineCount += 1
 
               if (i > 0 and j > 0):
-                  if (self.layout[i-1][j-1] == -1):
+                  if (self.layout[i-1][j-1].clue == -1):
                       adjacentMineCount += 1
 
               if (i > 0 and j < self.d - 1):
-                  if (self.layout[i-1][j+1] == -1):
+                  if (self.layout[i-1][j+1].clue == -1):
                       adjacentMineCount += 1
 
               if (i < self.d - 1 and j > 0):
-                  if (self.layout[i+1][j-1] == -1):
+                  if (self.layout[i+1][j-1].clue == -1):
                       adjacentMineCount += 1
 
               if (i < self.d - 1 and j < self.d - 1):
-                  if (self.layout[i+1][j+1] == -1):
+                  if (self.layout[i+1][j+1].clue == -1):
                       adjacentMineCount += 1
 
               hiddenCells = 8
