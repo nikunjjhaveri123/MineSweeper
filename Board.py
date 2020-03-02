@@ -9,7 +9,7 @@ class Board:
       self.n = n
       self.layout = np.zeros((self.d, self.d))
 
-      mineLocations = random.sample(range(1, self.d*self.d), self.n)
+      mineLocations = random.sample(range(0, self.d*self.d), self.n)
 
       for i in mineLocations:
           column = i % self.d
