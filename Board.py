@@ -7,7 +7,7 @@ class Board:
 
       self.d = d
       self.n = n
-      self.layout = np.zeros((self.d, self.d))
+      self.layout = np.empty((self.d, self.d))
 
       mineLocations = random.sample(range(0, self.d*self.d), self.n)
 
