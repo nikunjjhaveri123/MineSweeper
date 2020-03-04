@@ -8,7 +8,7 @@ class Board:
 
       self.d = d
       self.n = n
-      self.layout = [[Cell(0, 0, 8, 0, 0, 0) for j in range(0,d)] for i in range(0,d)]
+      self.layout = [[Cell(0, 0, 8, 0, False, False) for j in range(0,d)] for i in range(0,d)]
 
       # for a in range(0, self.d):
       #   for b in range(0, self.d):
@@ -64,4 +64,4 @@ class Board:
               if(i == 0 or j == 0):
                   hiddenCells = 3;
               self.layout[i][j].clue = adjacentMineCount
-              self.layout[i][j].hiddenSpaces = hiddenCells
+              self.layout[i][j].hiddenSquares = hiddenCells

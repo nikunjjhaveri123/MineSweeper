@@ -31,9 +31,9 @@ def drawBoard(board):
         x = str(i) + ' | '
         for j in range(0, board.d):
             c = ''
-            if (board.layout[i][j].shown == 0 and board.layout[i][j].flagged == 1):
+            if (board.layout[i][j].shown == False and board.layout[i][j].flagged == True):
                 c = ' F '
-            elif (board.layout[i][j].shown == 0):
+            elif (board.layout[i][j].shown == False):
                 c = ' - '
             elif (board.layout[i][j].clue == -1):
                 c = ' * '
