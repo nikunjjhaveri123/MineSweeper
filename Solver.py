@@ -1,15 +1,16 @@
-from .Board import Board
+from Board import Board
 
 class Solver:
 
     def __init__(self, d, n):
         self.board = Board(d, n)
+        drawBoard(self)
 
     def solve():
+        a = 1
         # write method to solve minesweeper board here
 
     def drawBoard(self):
-        int i, j;
         print('    ');
         for i in range(0,self.board.d):
             print(i + ' ');
@@ -17,18 +18,18 @@ class Solver:
         for i in range(0, self.board.d):
             print(i)
             print(' |')
-            for (j=0; j<SIDE; j++)
+            for j in range(0, self.board.d):
                 c = ''
                 if (self.board[i][j].shown == 0 and self.board[i][j].flagged):
                     c = ' F '
-                else if (self.board[i][j].shown == 0):
+                elif (self.board[i][j].shown == 0):
                     c = ' - '
-                else if (self.board[i][j].clue == -1):
+                elif (self.board[i][j].clue == -1):
                     c = ' * '
                 else:
                     c = ' '+str(self.board[i][j].clue)+' '
-                print(c + '|');
-            print("\n");
+                print(c + '|')
+            print("\n")
 
 
 # to generate a board via solver
