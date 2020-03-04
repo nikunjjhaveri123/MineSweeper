@@ -1,36 +1,50 @@
+#!/usr/bin/python
+
+import sys
+import argparse
 from Board import Board
 
-class Solver:
+board = Board(0,0)
 
-    def __init__(self, d, n):
-        self.board = Board(d, n)
-        drawBoard(self)
+def main():
+    parser = argparse.ArgumentParser(description = 'MINESWEEPER')
+    parser.add_argument('-d', '--dimension', help='Dimension of the board', required = True)
+    parser.add_argument('-n', '--NumberOFMines', help='Number of mines', required = True)
+    args = vars(parser.parse_args())
+    d = int(args['dimension'])
+    n = int(args['NumberOFMines'])
 
-    def solve():
-        a = 1
-        # write method to solve minesweeper board here
+    board = Board(d, n)
+    drawBoard(board)
 
-    def drawBoard(self):
-        print('    ');
-        for i in range(0,self.board.d):
-            print(i + ' ');
-        print("\n\n");
-        for i in range(0, self.board.d):
-            print(i)
-            print(' |')
-            for j in range(0, self.board.d):
-                c = ''
-                if (self.board[i][j].shown == 0 and self.board[i][j].flagged):
-                    c = ' F '
-                elif (self.board[i][j].shown == 0):
-                    c = ' - '
-                elif (self.board[i][j].clue == -1):
-                    c = ' * '
-                else:
-                    c = ' '+str(self.board[i][j].clue)+' '
-                print(c + '|')
-            print("\n")
+def solve():
+    a = 1
+    # write method to solve minesweeper board here
 
+def drawBoard(board):
+    print(' ')
+    columns = ' '
+    for i in range(0, board.d):
+        columns = columns + '    ' + str(i) + ' '
+    print(columns)
+    for i in range(0, board.d):
+        x = str(i) + ' | '
+        for j in range(0, board.d):
+            c = ''
+            if (board.layout[i][j].shown == 0 and board.layout[i][j].flagged == 1):
+                c = ' F '
+            elif (board.layout[i][j].shown == 0):
+                c = ' - '
+            elif (board.layout[i][j].clue == -1):
+                c = ' * '
+            else:
+                c = ' '+str(board.layout[i][j].clue)+' '
+            x = x + c + ' | '
+        print(x)
+        print("\n")
+
+if __name__ == "__main__":
+    main()
 
 # to generate a board via solver
 

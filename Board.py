@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from Cell import Cell
 
 class Board:
 
@@ -7,14 +8,18 @@ class Board:
 
       self.d = d
       self.n = n
-      self.layout = np.empty((self.d, self.d))
+      self.layout = [[Cell(0, 0, 8, 0, 0, 0) for j in range(0,d)] for i in range(0,d)]
+
+      # for a in range(0, self.d):
+      #   for b in range(0, self.d):
+      #       self.layout[a][b] = Cell(0, 0, 8, 0, 0, 0)
 
       mineLocations = random.sample(range(0, self.d*self.d), self.n)
 
       for i in mineLocations:
           column = i % self.d
           row = i // self.d
-          self.layout[row][column] = -1
+          self.layout[row][column].clue = -1
 
       for i in range(0, self.d):
           for j in range(0, self.d):
@@ -58,4 +63,5 @@ class Board:
               hiddenCells = 8
               if(i == 0 or j == 0):
                   hiddenCells = 3;
-              self.layout[i][j] = Cell(adjacentMineCount, 0, hiddenCells, 0, 0, 0)
+              self.layout[i][j].clue = adjacentMineCount
+              self.layout[i][j].hiddenSpaces = hiddenCells
