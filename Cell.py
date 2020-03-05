@@ -14,7 +14,7 @@ class Cell:
         self.hiddenSquares = hiddenSquares
 
         #int: number of mines identified
-        self.identifiedMines = identifieddMines
+        self.identifiedMines = identifiedMines
 
         #boolean: if you flag this cell
         self.flagged = flagged
