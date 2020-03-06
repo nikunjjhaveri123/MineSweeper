@@ -8,11 +8,11 @@ import random
 
 board = Board(0,0)
 
-#These two queues will be comprised of ints representing the cell on the board.
+#These sets will be comprised of ints representing the cell on the board.
 #For example, the number 4 on a board of dimension size 5 would represent the
 #2d array element (0,4). 6 would be (1,2)
-safeCells = deque()
-remainingCells = deque()
+safeCells = set()
+remainingCells = set()
 minesFound = 0
 minesSafelyFound = 0
 
@@ -27,7 +27,7 @@ def main():
 
     board = Board(d, n)
     for i in range(0, board.d*board.d):
-        remainingCells.append(i)
+        remainingCells.add(i)
 
     drawBoard()
     solve()
@@ -40,13 +40,22 @@ def getCoordinates(num):
     return row, col
 
 def solve():
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound
-    a = 1
-    simulateTurn()
     # write method to solve minesweeper board here
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound
+    simulateTurn()
 
 def simulateTurn():
     global board, safeCells, remainingCells, minesFound, minesSafelyFound
+
+
+    # someRC = random.choice(tuple(remainingCells))
+    # remainingCells.remove(someRC)
+    # print("random choice from set is: " + str(someRC))
+    # if(someRC in remainingCells):
+    #     print("uhhhhh, it's still in there")
+    # else:
+    #     print("ai we gucci boss, it's not in there")
+
 
     queriedCell  = -1
     if(len(safeCells) == 0):
