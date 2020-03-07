@@ -202,6 +202,7 @@ def openCell(cellNum, safelyIdentified):
         print("ENDING OPENCELL() ABRUPTLY")
         return
     board.layout[cellRow][cellCol].shown = True
+    print("We set cellNum: " + str(cellNum) + " to be true")
     if(board.layout[cellRow][cellCol].clue == -1):
         #cell is a mine
         if(safelyIdentified == True):
