@@ -76,9 +76,10 @@ def simulateTurn():
         queriedCell = random.randint(0, board.d*board.d-1)
     else:
         foundOne = False
-        print("I got in here")
         for cell in safeCells:
+            print("Finding Neighboring Safes or Mines for cellNum: " + str(cell))
             QCells, areSafe = findNeighboringSafesOrMines(cell)
+            print("Returned cells: " + str(QCells))
             if(len(QCells) > 0):
                 #Found a neighboring cell that can be conclusively identified as safe
                 foundOne = True
@@ -210,7 +211,12 @@ def openCell(cellNum, safelyIdentified):
             minesFound += 1
     else:
         #cell is not a mines
-        safeCells.add(cellNum)
+        if(board.layout[cellRow][cellCol].clue != 0):
+            #you don't need to add cells with clue = 0 to safe cells because
+            #safe cells is only used to pick the next cell to query. It is never
+            #useful to query on a cell whose clue is zero because when we do find
+            #such a cell, we already dfs on all its neighboring zeros
+            safeCells.add(cellNum)
     remainingCells.remove(cellNum)
     updateNeighbors(cellNum)
 
@@ -233,12 +239,18 @@ def findNeighboringSafesOrMines(cellNum):
     elif( (8 - clue) - identifiedSafes == hiddenSquares):
         allSafes = True
     else:
+        print("It returned this list of cells: " + str(Neighbors))
         return Neighbors, True
     nList = getNeighborIndices(cellNum)
+    print("Cells are safe? " + str(allSafes))
     for i in nList:
+        if(i == -1):
+            continue
         iRow, iCol = getCoordinates(cellNum)
+        print("iCellNum: " + str(i) + " shown status: " + str(board.layout[iRow][iCol].shown))
         if(board.layout[iRow][iCol].shown == False):
             Neighbors.append(i)
+    print("It returned this full list of cells: " + str(Neighbors))
     return Neighbors, allSafes
 
 #This recursive method assumes that the input cellNum of the first call
