@@ -54,21 +54,13 @@ def getCoordinates(num):
 def solve():
     # write method to solve minesweeper board here
     global board, safeCells, remainingCells, minesFound, minesSafelyFound
-    while(minesFound < board.n):
+    while(len(remainingCells) > 0):
         simulateTurn()
-        print("SafeCells for this turn are: " + str(safeCells))
 
-    print("Total number of Mines Safely Identified: " + str(minesSafelyFound))
+
+    print("Total number of Mines Safely Identified: " + str(minesSafelyFound) + " Out of: " + str(board.n))
 def simulateTurn():
     global board, safeCells, remainingCells, minesFound, minesSafelyFound
-
-    # someRC = random.choice(tuple(remainingCells))
-    # remainingCells.remove(someRC)
-    # print("random choice from set is: " + str(someRC))
-    # if(someRC in remainingCells):
-    #     print("uhhhhh, it's still in there")
-    # else:
-    #     print("ai we gucci boss, it's not in there")
 
     queriedCell  = -1
     QCells = []
@@ -78,9 +70,7 @@ def simulateTurn():
     else:
         foundOne = False
         for cell in safeCells:
-            print("Finding Neighboring Safes or Mines for cellNum: " + str(cell))
             QCells, areSafe = findNeighboringSafesOrMines(cell)
-            print("Returned cells: " + str(QCells))
             if(len(QCells) > 0):
                 #Found a neighboring cell that can be conclusively identified as safe or a mine
                 foundOne = True
@@ -117,7 +107,7 @@ def simulateTurn():
                 #more than once on the same cell
                 DFSOnZeros(query)
             else:
-                openCell(query, areSafe)
+                openCell(query, True)
     drawBoard()
 
 #should take in the number of a cell and update all 8 of it's neighbors with the
@@ -240,18 +230,14 @@ def findNeighboringSafesOrMines(cellNum):
     elif( (8 - clue) - identifiedSafes == hiddenSquares):
         allSafes = True
     else:
-        print("It returned this list of cells: " + str(Neighbors))
         return Neighbors, True
     nList = getNeighborIndices(cellNum)
-    print("Cells are safe? " + str(allSafes))
     for i in nList:
         if(i == -1):
             continue
-        iRow, iCol = getCoordinates(cellNum)
-        print("iCellNum: " + str(i) + " shown status: " + str(board.layout[iRow][iCol].shown))
+        iRow, iCol = getCoordinates(i)
         if(board.layout[iRow][iCol].shown == False):
             Neighbors.append(i)
-    print("It returned this full list of cells: " + str(Neighbors))
     return Neighbors, allSafes
 
 #This recursive method assumes that the input cellNum of the first call
@@ -307,7 +293,7 @@ def drawBoard():
         x = str(i) + ' | '
         for j in range(0, board.d):
             c = ''
-            if (board.layout[i][j].shown == False and board.layout[i][j].flagged == True):
+            if (board.layout[i][j].flagged == True):
                 c = ' F '
             elif (board.layout[i][j].shown == False):
                 c = ' - '
