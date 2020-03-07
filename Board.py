@@ -14,7 +14,10 @@ class Board:
       #   for b in range(0, self.d):
       #       self.layout[a][b] = Cell(0, 0, 8, 0, 0, 0)
 
-      mineLocations = random.sample(range(0, self.d*self.d), self.n)
+      #mineLocations = random.sample(range(0, self.d*self.d), self.n)
+
+      print("UNCOMMENT LINE 17 AND DELETE LINE 19 and 20 WHEN YOU'RE DONE DEBUGGING")
+      mineLocations = random.sample(range(4, 5), self.n)
 
       for i in mineLocations:
           column = i % self.d

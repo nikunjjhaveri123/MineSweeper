@@ -82,7 +82,7 @@ def simulateTurn():
             QCells, areSafe = findNeighboringSafesOrMines(cell)
             print("Returned cells: " + str(QCells))
             if(len(QCells) > 0):
-                #Found a neighboring cell that can be conclusively identified as safe
+                #Found a neighboring cell that can be conclusively identified as safe or a mine
                 foundOne = True
                 break
         if(foundOne == False):
