@@ -56,6 +56,7 @@ def solve():
     global board, safeCells, remainingCells, minesFound, minesSafelyFound
     while(minesFound < board.n):
         simulateTurn()
+        print("SafeCells for this turn are: " + str(safeCells))
 
     print("Total number of Mines Safely Identified: " + str(minesSafelyFound))
 def simulateTurn():
@@ -116,7 +117,7 @@ def simulateTurn():
                 #more than once on the same cell
                 DFSOnZeros(query)
             else:
-                openCell(query)
+                openCell(query, areSafe)
     drawBoard()
 
 #should take in the number of a cell and update all 8 of it's neighbors with the
@@ -206,7 +207,7 @@ def openCell(cellNum, safelyIdentified):
         if(safelyIdentified == True):
             minesFound += 1
             minesSafelyFound += 1
-            flagged = True
+            board.layout[cellRow][cellCol].flagged = True
         else:
             minesFound += 1
     else:
@@ -223,7 +224,7 @@ def openCell(cellNum, safelyIdentified):
 #This method takes in a cellNum as parameter and returns a tuple: (list of cells that
 #can be conclusively identified as either all safe or all mines, True for all safe and False for all mines)
 #if it cannot find any such list, it returns an empty list and the other part of the tple doesn't matter
-# return Value: (list of cells, True or Falseindicating all safe or all mines)
+# return Value: (list of cells, True or False indicating all safe or all mines)
 def findNeighboringSafesOrMines(cellNum):
     global board, safeCells, remainingCells, minesFound, minesSafelyFound
     cellRow, cellCol = getCoordinates(cellNum)
