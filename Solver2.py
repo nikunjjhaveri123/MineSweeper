@@ -6,6 +6,8 @@ from Board import Board
 from collections import deque
 import random
 import math
+import numpy as np
+from queue import PriorityQueue
 
 ###########################  CONSTANTS  ###########################
 TOPLEFTINDEX = 0
@@ -29,6 +31,10 @@ probHash = dict()
 minesFound = 0
 minesSafelyFound = 0
 
+probabilityBoard = None
+# cellsToVisit = PriorityQueue()
+
+
 
 def main():
     global board, safeCells, remainingCells, minesFound, probHash
@@ -40,6 +46,9 @@ def main():
     n = int(args['NumberOfMines'])
 
     board = Board(d, n)
+
+    probabilityBoard = np.full((d,d), n/(d*d))
+
     for i in range(0, board.d*board.d):
         remainingCells.add(i)
         probHash[i] = n / (d * d)
@@ -78,16 +87,29 @@ def firstTurn():
     else:
         if(board.layout[qCellRow][qCellCol].clue == -1):
             #we opened a mine unknowingly
+            # openCell(queriedCell, False)
+            # for i in range(0, board.d*board.d):
+            #     probHash[i] = (board.n-1) / (board.d*board.d - 1)
+
+            # END GAME
             openCell(queriedCell, False)
-            for i in range(0, board.d*board.d):
-                probHash[i] = (board.n-1) / (board.d*board.d - 1)
+            print("END GAME")
+
         else:
             #we opened a non  mine (second parameter could be true or false, doesn't matter)
             openCell(queriedCell, True)
             for i in range(0, board.d*board.d):
                 probHash[i] = (board.n) / (board.d*board.d - 1)
+            solve()
     drawBoard()
-    solve()
+
+
+def updateProbabilities():
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, probHash
+    for cell in safeCells:
+
+
+
 
 #should take in the number of a cell and update all 8 of it's neighbors with the
 #necessary information. In this method, the given cell should be shown (opened) already
@@ -170,7 +192,9 @@ def openCell(cellNum, safelyIdentified):
         print("There may be a problem here. openCell() is being called more than once on cellNum: " + str(cellNum))
         print("ENDING OPENCELL() ABRUPTLY")
         return
+
     board.layout[cellRow][cellCol].shown = True
+
     if(board.layout[cellRow][cellCol].clue == -1):
         #cell is a mine
         if(safelyIdentified == True):
@@ -187,6 +211,9 @@ def openCell(cellNum, safelyIdentified):
             #useful to query on a cell whose clue is zero because when we do find
             #such a cell, we already dfs on all its neighboring zeros
             safeCells.add(cellNum)
+            neighbors = getNeighborIndices(cellNum)
+            board.layout[cellRow][cellCol].clue/neighbors.length
+
     remainingCells.remove(cellNum)
     updateNeighbors(cellNum)
 
