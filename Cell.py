@@ -21,3 +21,10 @@ class Cell:
 
         #boolean: whether this cell has been clicked on or not (we know if it is safe or not)
         self.shown = shown
+
+        self.constraintEquation = list()
+
+        self.constraintValue = clue
+
+    def addConstraintVariable(self, cellToAdd):
+        self.constraintEquation.append(cellToAdd)
