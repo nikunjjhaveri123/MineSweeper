@@ -5,6 +5,10 @@ import argparse
 from Board import Board
 from collections import deque
 import random
+from itertools import product
+from scipy.signal import convolve2d
+import matplotlib.pyplot as plt
+from matplotlib.patches import RegularPolygon
 
 ###########################  CONSTANTS  ###########################
 TOPLEFTINDEX = 0
@@ -27,7 +31,6 @@ remainingCells = set()
 minesFound = 0
 minesSafelyFound = 0
 allEquations = list()
-
 
 def main():
     global board, safeCells, remainingCells, minesFound
