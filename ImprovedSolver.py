@@ -50,7 +50,7 @@ def initialize(d,n):
         remainingCells.add(i)
 
     drawBoard()
-    solve()
+    return solve()
 
 #returns the coordinate of a cell given a num. E.g: 6 = (1,2)
 def getCoordinates(num):
@@ -65,8 +65,10 @@ def solve():
     while(len(remainingCells) > 0):
         simulateTurn()
 
-
     print("Total number of Mines Safely Identified: " + str(minesSafelyFound) + " Out of: " + str(board.n))
+
+    return minesSafelyFound, minesFound
+
 def simulateTurn():
     global board, safeCells, remainingCells, minesFound, minesSafelyFound
 
