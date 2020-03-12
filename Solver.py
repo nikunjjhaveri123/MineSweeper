@@ -37,6 +37,10 @@ def main():
     d = int(args['dimension'])
     n = int(args['NumberOfMines'])
 
+    initialize(d,n)
+
+def initialize(d,n):
+    global board, safeCells, remainingCells, minesFound
     board = Board(d, n)
     for i in range(0, board.d*board.d):
         remainingCells.add(i)
