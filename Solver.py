@@ -48,7 +48,7 @@ def initialize(d,n):
         remainingCells.add(i)
 
     drawBoard()
-    solve()
+    return solve()
     ms = msGUI.custom(d,n)
     plt.show()
 
@@ -65,8 +65,10 @@ def solve():
     while(len(remainingCells) > 0):
         simulateTurn()
 
-
     print("Total number of Mines Safely Identified: " + str(minesSafelyFound) + " Out of: " + str(board.n))
+
+    return minesSafelyFound, minesFound
+
 def simulateTurn():
     global board, safeCells, remainingCells, minesFound, minesSafelyFound
 
