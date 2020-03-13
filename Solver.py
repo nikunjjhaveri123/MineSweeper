@@ -42,7 +42,12 @@ def main():
     initialize(d,n)
 
 def initialize(d,n):
-    global board, safeCells, remainingCells, minesFound
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound
+
+    # reinitialize globals
+    minesFound = 0
+    minesSafelyFound = 0
+
     board = Board(d, n)
     for i in range(0, board.d*board.d):
         remainingCells.add(i)
