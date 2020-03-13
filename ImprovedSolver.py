@@ -40,13 +40,21 @@ def main():
     args = vars(parser.parse_args())
     d = int(args['dimension'])
     n = int(args['NumberOfMines'])
+    initialize(d, n)
+
+def initialize(d, n):
+
+    global board, safeCells, remainingCells, minesSafelyFound, minesFound
+
+    minesFound = 0
+    minesSafelyFound = 0
 
     board = Board(d, n)
     for i in range(0, board.d*board.d):
         remainingCells.add(i)
 
     drawBoard()
-    solve()
+    return solve()
 
 #returns the coordinate of a cell given a num. E.g: 6 = (1,2)
 def getCoordinates(num):
@@ -63,6 +71,9 @@ def solve():
 
 
     print("Total number of Mines Safely Identified: " + str(minesSafelyFound) + " Out of: " + str(board.n))
+
+    return minesSafelyFound, minesFound
+
 def simulateTurn():
     global board, safeCells, remainingCells, minesFound, minesSafelyFound
 
