@@ -5,6 +5,8 @@ import argparse
 from Board import Board
 from collections import deque
 import random
+from msGUI import msGUI
+import matplotlib.pyplot as plt
 
 ###########################  CONSTANTS  ###########################
 TOPLEFTINDEX = 0
@@ -47,6 +49,8 @@ def initialize(d,n):
 
     drawBoard()
     solve()
+    ms = msGUI.custom(d,n)
+    plt.show()
 
 #returns the coordinate of a cell given a num. E.g: 6 = (1,2)
 def getCoordinates(num):
