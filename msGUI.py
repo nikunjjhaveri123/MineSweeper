@@ -69,7 +69,7 @@ class msGUI(object):
         self.game_over = False
 
         # Create event hook for mouse clicks
-        self.fig.canvas.mpl_connect('button_press_event', self._button_press)
+        # self.fig.canvas.mpl_connect('button_press_event', self._button_press)
 
     def _draw_mine(self, i, j):
         self.ax.add_patch(plt.Circle((i + 0.5, j + 0.5), radius=0.25,
