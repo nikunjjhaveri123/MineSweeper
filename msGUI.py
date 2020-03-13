@@ -12,7 +12,6 @@ from scipy.signal import convolve2d
 import matplotlib.pyplot as plt
 from matplotlib.patches import RegularPolygon
 
-
 class msGUI(object):
     covered_color = '#DDDDDD'
     uncovered_color = '#AAAAAA'
@@ -22,24 +21,25 @@ class msGUI(object):
     flag_vertices = np.array([[0.25, 0.2], [0.25, 0.8],
                               [0.75, 0.65], [0.25, 0.5]])
     @classmethod
-    def custom(cls, dim, nmines):
-        return cls(dim, dim, nmines)
+    def custom(cls, dim, nmines, msBoard):
+        return cls(dim, dim, nmines, msBoard)
 
     @classmethod
-    def beginner(cls):
-        return cls(8, 8, 10)
+    def beginner(cls, msBoard):
+        return cls(8, 8, 10, msBoard)
 
     @classmethod
-    def intermediate(cls):
-        return cls(16, 16, 40)
+    def intermediate(cls, msBoard):
+        return cls(16, 16, 40, msBoard)
 
     @classmethod
-    def expert(cls):
-        return cls(30, 16, 99)
+    def expert(cls, msBoard):
+        return cls(30, 16, 99, msBoard)
 
-    def __init__(self, width, height, nmines):
+    def __init__(self, width, height, nmines, msBoard):
+
         self.width, self.height, self.nmines = width, height, nmines
-
+        self.board = msBoard
         # Create the figure and axes
         self.fig = plt.figure(figsize=((width + 2) / 3., (height + 2) / 3.))
         self.ax = self.fig.add_axes((0.05, 0.05, 0.9, 0.9),
@@ -69,7 +69,7 @@ class msGUI(object):
         self.game_over = False
 
         # Create event hook for mouse clicks
-        # self.fig.canvas.mpl_connect('button_press_event', self._button_press)
+        self.fig.canvas.mpl_connect('button_press_event', self._button_press)
 
     def _draw_mine(self, i, j):
         self.ax.add_patch(plt.Circle((i + 0.5, j + 0.5), radius=0.25,
@@ -104,14 +104,33 @@ class msGUI(object):
 
     def _setup_mines(self, i, j):
         # randomly place mines on a grid, but not on space (i, j)
-        idx = np.concatenate([np.arange(i * self.height + j),
-                              np.arange(i * self.height + j + 1,
-                                        self.width * self.height)])
-        np.random.shuffle(idx)
+        # idx = np.concatenate([np.arange(i * self.height + j),
+        #                       np.arange(i * self.height + j + 1,
+        #                                 self.width * self.height)])
+        # np.random.shuffle(idx)
         self.mines = np.zeros((self.width, self.height), dtype=bool)
-        self.mines.flat[idx[:self.nmines]] = 1
+        # self.mines.flat[idx[:self.nmines]] = 1
 
-        # count the number of mines bordering each square
+        #print("[", end ="")
+        row = 0
+        col = 0
+        for i in range(self.height-1, -1, -1):
+            #print("[", end= "")
+            col = 0
+            for j in range(0, self.width):
+                #print("(" + str(row) + "," + str(col) + ")")
+                if(self.board.layout[row][col].clue == -1):
+                    self.mines[j][i] = True
+                else:
+                    self.mines[j][i] = False
+                #print( str(self.mines[j][i]) + ",", end ="")
+                col += 1
+            row += 1
+
+            #print("]")
+        #print("] DONE")
+        #print(self.mines)
+        #count the number of mines bordering each square
         self.counts = convolve2d(self.mines.astype(complex), np.ones((3, 3)),
                                  mode='same').real.astype(int)
 
@@ -127,10 +146,10 @@ class msGUI(object):
 
         # hit a mine: game over
         if self.mines[i, j]:
-            self.game_over = True
-            self._reveal_unmarked_mines()
+            #self.game_over = True
+            #self._reveal_unmarked_mines()
             self._draw_red_X(i, j)
-            self._cross_out_wrong_flags()
+            #self._cross_out_wrong_flags()
 
         # square with no surrounding mines: clear out all adjacent squares
         elif self.counts[i, j] == 0:
@@ -176,6 +195,34 @@ class msGUI(object):
 
         # right mouse button: mark/unmark flag
         elif (event.button == 3) and (not self.clicked[i, j]):
+            self._toggle_mine_flag(i, j)
+
+        self.fig.canvas.draw()
+
+    def revealCell(self, i, j, flag):
+        # if self.game_over or (event.xdata is None) or (event.ydata is None):
+        #     return
+        # i, j = map(int, (event.xdata, event.ydata))
+        if (i < 0 or j < 0 or i >= self.width or j >= self.height):
+            return
+
+        # left mouse button: reveal square.  If the square is already clicked
+        # and the correct # of mines are marked, then clear surroundig squares
+        if (flag == False):
+            if (self.clicked[i, j]):
+                flag_count = self.flags[max(0, i - 1):i + 2,
+                                        max(0, j - 1):j + 2].astype(bool).sum()
+                if self.counts[i, j] == flag_count:
+                    for ii, jj in product(range(max(0, i - 1),
+                                                min(self.width, i + 2)),
+                                          range(max(0, j - 1),
+                                                min(self.height, j + 2))):
+                        self._click_square(ii, jj)
+            else:
+                self._click_square(i, j)
+
+        # right mouse button: mark/unmark flag
+        elif (flag == True) and (not self.clicked[i, j]):
             self._toggle_mine_flag(i, j)
 
         self.fig.canvas.draw()
