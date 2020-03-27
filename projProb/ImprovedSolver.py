@@ -151,7 +151,7 @@ def updateNeighbors(cellNum):
                 continue
             nRow, nCol = getCoordinates(neighbor)
             board.layout[nRow][nCol].hiddenSquares -= 1
-            board.layout[nRow][nCol].identifiedMines -= 1
+            board.layout[nRow][nCol].identifiedMines += 1
     else:
         #not a mine
         for i in range(0, 8):
@@ -159,7 +159,7 @@ def updateNeighbors(cellNum):
             if(neighbor == -1):
                 continue
             nRow, nCol = getCoordinates(neighbor)
-            board.layout[nRow][nCol].identifiedSafes -= 1
+            board.layout[nRow][nCol].identifiedSafes += 1
             board.layout[nRow][nCol].hiddenSquares -= 1
 
 
