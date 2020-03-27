@@ -67,4 +67,5 @@ class Board:
               if(i == 0 or j == 0):
                   hiddenCells = 3;
               self.layout[i][j].clue = adjacentMineCount
+              self.layout[i][j].constraintValue = adjacentMineCount
               self.layout[i][j].hiddenSquares = hiddenCells
