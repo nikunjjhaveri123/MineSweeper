@@ -150,7 +150,7 @@ def simulateTurn():
                 DFSOnZeros(query)
             else:
                 openCell(query, True)
-    drawBoard()
+    #drawBoard()
 
 #should take in the number of a cell and update all 8 of it's neighbors with the
 #necessary information. In this method, the given cell should be shown (opened) already
@@ -257,7 +257,7 @@ def openCell(cellNum, safelyIdentified):
             safeCells.add(cellNum)
     remainingCells.remove(cellNum)
     updateNeighbors(cellNum)
-    printAllEquations()
+    #printAllEquations()
 
 #This method takes in a cellNum as parameter and returns a tuple: (list of cells that
 #can be conclusively identified as either all safe or all mines, True for all safe and False for all mines)
@@ -390,7 +390,11 @@ def SolveConstraintEquations():
 def findNewSafeOrMines():
     global board, allEquations
     changes = False
-    for eq in allEquations:
+    #allEquationsCopy = deepCopyEquations(allEquations)
+    for eq in allEquations.copy():
+
+        if(eq not in allEquations):
+            continue
 
         #If the equation is empty  or there are no more vairables remove it
         if (len(eq) == 0 or len(eq[0]) == 0):
