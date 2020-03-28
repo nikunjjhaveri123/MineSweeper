@@ -84,6 +84,22 @@ def simulateTurn():
 
         foundOne = False
         for cell in safeCells:
+            
+            #this part wants to remove cells from safeCells that have all their neighbors revealed already
+            NeighborsList = getNeighborIndices(cell)
+            hasUnopenedNeighbor = False
+            for neighbor in NeighborsList:
+                if(neighbor == -1):
+                    continue
+                nRow, nCol = getCoordinates(neighbor)
+                if(board.layout[nRow][nCol].shown == False):
+                    hasUnopenedNeighor = True
+                    break
+            if(hasUnopenedNeighbor == False):
+                #You can remove this from safeCells since all of it's neighbors are opened already anyways
+                safeCells.remove(cell)
+                continue
+
             QCells, areSafe = findNeighboringSafesOrMines(cell)
             if(len(QCells) > 0):
                 #Found a neighboring cell that can be conclusively identified as safe or a mine
@@ -336,7 +352,7 @@ def createConstraintEquation(cellNum):
         # If a neighbour is already shown, then do not add it to the equation.
         if (board.layout[iRow][iCol].shown == True):
             continue
-            
+
         board.layout[row][col].addConstraintVariable(icell)
 
     #Adding the newly created equation for a cell to the global list of equations

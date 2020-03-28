@@ -82,7 +82,24 @@ def simulateTurn():
     else:
         printAllEquations()
         foundOne = False
-        for cell in safeCells:
+        safeCellsCopy = safeCells.copy()
+        for cell in safeCellsCopy:
+
+            #this part wants to remove cells from safeCells that have all their neighbors revealed already
+            NeighborsList = getNeighborIndices(cell)
+            hasUnopenedNeighbor = False
+            for neighbor in NeighborsList:
+                if(neighbor == -1):
+                    continue
+                nRow, nCol = getCoordinates(neighbor)
+                if(board.layout[nRow][nCol].shown == False):
+                    hasUnopenedNeighor = True
+                    break
+            if(hasUnopenedNeighbor == False):
+                #You can remove this from safeCells since all of it's neighbors are opened already anyways
+                safeCells.remove(cell)
+                continue
+
             QCells, areSafe = findNeighboringSafesOrMines(cell)
             if(len(QCells) > 0):
                 #Found a neighboring cell that can be conclusively identified as safe or a mine
