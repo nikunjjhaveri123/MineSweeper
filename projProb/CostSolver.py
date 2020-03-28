@@ -83,8 +83,9 @@ def simulateTurn():
     else:
 
         foundOne = False
-        for cell in safeCells:
-            
+        safeCellsCopy = safeCells.copy()
+        for cell in safeCellsCopy:
+
             #this part wants to remove cells from safeCells that have all their neighbors revealed already
             NeighborsList = getNeighborIndices(cell)
             hasUnopenedNeighbor = False
