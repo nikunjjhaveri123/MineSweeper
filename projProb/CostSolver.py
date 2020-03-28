@@ -81,7 +81,7 @@ def simulateTurn():
     if(len(safeCells) == 0):
         queriedCell = random.randint(0, board.d*board.d-1)
     else:
-        printAllEquations()
+
         foundOne = False
         for cell in safeCells:
             QCells, areSafe = findNeighboringSafesOrMines(cell)
@@ -98,11 +98,12 @@ def simulateTurn():
             #Could not find any cells that can conclusively be identified as safe
             #Thus, we are choosing at random from the remainingCells set
             else:
-                queriedCell = random.choice(tuple(remainingCells))
-                # configList = list()
-                # configList = determineConfigs(allEquations, configList, configList)
-                # queriedCell = calculateProbabliites(configList)
-                # print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
+                #queriedCell = random.choice(tuple(remainingCells))
+                configList = list()
+                masterConfigList = list()
+                configList = determineConfigs(allEquations, configList, masterConfigList)
+                queriedCell = calculateProbabliites(configList)
+                print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
 
     if(queriedCell > -1):
         #we don't have a list of cells to query, just one
@@ -152,7 +153,7 @@ def updateNeighbors(cellNum):
                 continue
             nRow, nCol = getCoordinates(neighbor)
             board.layout[nRow][nCol].hiddenSquares -= 1
-            board.layout[nRow][nCol].identifiedMines -= 1
+            board.layout[nRow][nCol].identifiedMines += 1
     else:
         #not a mine
         for i in range(0, 8):
@@ -160,7 +161,7 @@ def updateNeighbors(cellNum):
             if(neighbor == -1):
                 continue
             nRow, nCol = getCoordinates(neighbor)
-            board.layout[nRow][nCol].identifiedSafes -= 1
+            board.layout[nRow][nCol].identifiedSafes += 1
             board.layout[nRow][nCol].hiddenSquares -= 1
 
 
@@ -225,18 +226,21 @@ def openCell(cellNum, safelyIdentified):
             board.layout[cellRow][cellCol].flagged = True
         else:
             minesFound += 1
+            allEquations = removeCellFromAllEquations(cellNum, True, allEquations)
     else:
         #cell is not a mines
-        createConstraintEquation(cellNum)
+
         if(board.layout[cellRow][cellCol].clue != 0):
             #you don't need to add cells with clue = 0 to safe cells because
             #safe cells is only used to pick the next cell to query. It is never
             #useful to query on a cell whose clue is zero because when we do find
             #such a cell, we already dfs on all its neighboring zeros
+            createConstraintEquation(cellNum)
             allEquations = removeCellFromAllEquations(cellNum, False, allEquations)
             safeCells.add(cellNum)
     remainingCells.remove(cellNum)
     updateNeighbors(cellNum)
+    printAllEquations()
 
 #This method takes in a cellNum as parameter and returns a tuple: (list of cells that
 #can be conclusively identified as either all safe or all mines, True for all safe and False for all mines)
@@ -324,9 +328,15 @@ def createConstraintEquation(cellNum):
             board.layout[iRow][iCol].constraintValue -=1
             continue
 
+        #If neighbor is already a mine then do not add but subtract the constraint value
+        if (board.layout[iRow][iCol].shown == True and board.layout[iRow][iCol].clue == -1):
+            board.layout[row][col].constraintValue -=1
+            continue
+
         # If a neighbour is already shown, then do not add it to the equation.
         if (board.layout[iRow][iCol].shown == True):
             continue
+            
         board.layout[row][col].addConstraintVariable(icell)
 
     #Adding the newly created equation for a cell to the global list of equations
@@ -433,7 +443,6 @@ def findNewSafeOrMines2(currEqList):
             currEqList.remove(eq)
             for cells in eq[0]:
                 newDiscoveredCells.append([cells, 0])
-
             continue
 
         #If the number of variables in the equation is equal to value then all cells in the equations are mines.
@@ -442,33 +451,39 @@ def findNewSafeOrMines2(currEqList):
             currEqList.remove(eq)
             for cells in eq[0]:
                 newDiscoveredCells.append([cells, 1])
-    return newDiscoveredCells
+    return newDiscoveredCells, currEqList
 
 def removeCellFromAllEquations(cellNum, isMine, currentEq):
+    global board
     for eq in currentEq:
         if cellNum in eq[0]:
+            #print("Removing cell " + str(cellNum) + " From equation: " + str(eq[0]))
             eq[0].remove(cellNum)
-
-        if isMine:
-            eq[1] -=1
+            if isMine:
+                #print("Cell was a mine, substracting 1")
+                eq[1] -=1
+            if(len(eq[0]) == 0):
+                currentEq.remove(eq)
     return currentEq
 
 def determineConfigs(currEqList, currConfigList, masterConfigList):
     global allEquations, allSafes, board
     if(len(currEqList) == 0):
+        # print("CONFIG LIST TO BE APPENDED TO MAIN LIST")
+        # print(currConfigList)
         masterConfigList.append(currConfigList)
         return masterConfigList
-    print("THIS IS THE CURRENT EQ:")
-    print(currEqList)
+    # print("THIS IS THE CURRENT EQ:")
+    # print(currEqList)
     copyMineEq = deepCopyEquations(currEqList)
-    print("THIS IS DEEP COPY")
-    print(copyMineEq)
+    # print("THIS IS DEEP COPY")
+    # print(copyMineEq)
     chosenCell = copyMineEq[0][0][0]
     copyMineEq = removeCellFromAllEquations(chosenCell, True, copyMineEq)
     configMine = deepCopyConfigs(currConfigList)
     configMine.append([chosenCell, 1])
     copyMineEq = SolveConstraintEquations2(copyMineEq)
-    newlyFoundCells = findNewSafeOrMines2(copyMineEq)
+    newlyFoundCells, copyMineEq = findNewSafeOrMines2(copyMineEq)
     for values in newlyFoundCells:
         configMine.append(values)
     masterConfigList = determineConfigs(copyMineEq, configMine, masterConfigList)
@@ -480,7 +495,7 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     configSafe = deepCopyConfigs(currConfigList)
     configSafe.append([chosenCell, 0])
     copySafeEq = SolveConstraintEquations2(copySafeEq)
-    newlyFoundCells = findNewSafeOrMines2(copySafeEq)
+    newlyFoundCells, copySafeEq = findNewSafeOrMines2(copySafeEq)
     for values in newlyFoundCells:
         configSafe.append(values)
     masterConfigList = determineConfigs(copySafeEq, configSafe, masterConfigList)
@@ -490,29 +505,41 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
 def calculateProbabliites(configList):
     global board, remainingCells
     allCells = {}
+    foundProbableCell = False
+    # print(configList)
     for config in configList:
         for cell in config:
             if cell[1] == 1:
-                if cell[0] in allCells:
+                if cell[0] in allCells.keys():
                     allCells[cell[0]] = allCells[cell[0]] + 1
                 else:
                     allCells[cell[0]] = 1
-            elif cell[0] not in allCells:
-                 allCells[cells[0]] = 0
+            elif cell[0] not in allCells.keys():
+                 allCells[cell[0]] = 0
     totalConfig = len(configList)
-    cellToPick = next(iter(allCells))
+    cellToPick = -1
     lowestProbability = 1;
     for cell in allCells:
         allCells[cell] = float(allCells[cell] / totalConfig)
         if allCells[cell] < lowestProbability:
             lowestProbability = allCells[cell]
             cellToPick = cell
+            foundProbableCell = True
 
-    if (lowestProbability > 0.5):
+    if (lowestProbability > 0.5 or cellToPick == -1):
+        print("ALL PROBS GREATER THAN 0.5")
         for i in range (0,board.d * board.d):
             if(i in remainingCells and i not in allCells):
+                foundProbableCell = True
                 cellToPick = i
                 break
+
+    if(foundProbableCell == False):
+        print("CHOOSEING ANY REMAIING CELL")
+        for cell in remainingCells:
+            cellToPick = cell
+            break
+
     return cellToPick
 
 #Prints out all the current constraint equations for the board
@@ -554,15 +581,18 @@ def drawBoard():
     for i in range(0, board.d):
         x = str(i) + ' | '
         for j in range(0, board.d):
-            c = ''
-            if (board.layout[i][j].flagged == True):
-                c = ' F '
-            elif (board.layout[i][j].shown == False):
-                c = ' - '
-            elif (board.layout[i][j].clue == -1):
-                c = ' * '
+            if j >= 10:
+                c = ' '
             else:
-                c = ' '+str(board.layout[i][j].clue)+' '
+                c = ''
+            if (board.layout[i][j].flagged == True):
+                c = c + ' F '
+            elif (board.layout[i][j].shown == False):
+                c = c + ' - '
+            elif (board.layout[i][j].clue == -1):
+                c = c + ' * '
+            else:
+                c = c + ' '+str(board.layout[i][j].clue)+' '
             x = x + c + ' | '
         print(x)
         print("\n")
