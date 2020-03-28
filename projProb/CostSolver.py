@@ -110,7 +110,7 @@ def simulateTurn():
             #Could not find any safe cells from single clues. Will not use the constraint equations to look at relationships between cells to identify mines/safe cells
             foundNewCells = SolveConstraintEquations()
             if(foundNewCells == True):
-                print("FOUND STUFF USING EQUATIONS")
+                ####################print("FOUND STUFF USING EQUATIONS")
                 return
             #Could not find any cells that can conclusively be identified as safe
             #Thus, we are choosing at random from the remainingCells set
@@ -125,17 +125,19 @@ def simulateTurn():
     if(queriedCell > -1):
         #we don't have a list of cells to query, just one
         qCellRow, qCellCol = getCoordinates(queriedCell)
-        print("Queried Cell: " + str(queriedCell))
-        print("Queried Cell Clue: " + str(board.layout[qCellRow][qCellCol].clue))
+        #################print("Queried Cell: " + str(queriedCell))
+        #################print("Queried Cell Clue: " + str(board.layout[qCellRow][qCellCol].clue))
         if(board.layout[qCellRow][qCellCol].clue == 0):
             #DFSOnZeros takes care of opening the necessary cells
             DFSOnZeros(queriedCell)
         else:
             if(board.layout[qCellRow][qCellCol].clue == -1):
                 #we opened a mine unknowingly
+                print("OPENING FROM simulate turn 1")
                 openCell(queriedCell, False)
             else:
                 #we opened a non  mine (second parameter could be true or false, doesn't matter)
+                print("OPENING FROM simulate turn 2")
                 openCell(queriedCell, True)
     else:
         for query in QCells:
@@ -149,6 +151,7 @@ def simulateTurn():
                 #more than once on the same cell
                 DFSOnZeros(query)
             else:
+                print("OPENING FROM simulate turn 3")
                 openCell(query, True)
     #drawBoard()
 
@@ -305,6 +308,7 @@ def DFSOnZeros(cellNum):
         return
 
     #second parameter here is true since we know that we will never hit a mine in this method
+    print("OPENING FROM DFS ON ZERO")
     openCell(cellNum, True)
 
     if(board.layout[cellRow][cellCol].clue > 0):
@@ -410,6 +414,7 @@ def findNewSafeOrMines():
                 if(board.layout[row][col].clue == 0):
                     DFSOnZeros(cells)
                 else:
+                    print("OPENING FROM SOLVING EQUATIONS 1")
                     openCell(cells, True)
 
             continue
@@ -419,6 +424,7 @@ def findNewSafeOrMines():
             changes = True
             allEquations.remove(eq)
             for cells in eq[0]:
+                print("OPENING FROM SOLVING EQUATIONS 2")
                 openCell(cells, True)
     return changes
 
@@ -556,7 +562,7 @@ def calculateProbabliites(configList):
                 break
 
     if(foundProbableCell == False):
-        print("CHOOSEING ANY REMAIING CELL")
+        print("CHOOSING ANY REMAINING CELL")
         for cell in remainingCells:
             cellToPick = cell
             break

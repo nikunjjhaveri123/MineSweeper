@@ -128,7 +128,7 @@ def simulateTurn():
         else:
             if(board.layout[qCellRow][qCellCol].clue == -1):
                 #we opened a mine unknowingly
-                print("OPENING FROM simulater turn 1")
+                print("OPENING FROM simulate turn 1")
                 openCell(queriedCell, False)
             else:
                 #we opened a non  mine (second parameter could be true or false, doesn't matter)
