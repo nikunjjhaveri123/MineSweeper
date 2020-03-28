@@ -392,7 +392,10 @@ def SolveConstraintEquations():
 def findNewSafeOrMines():
     global board, allEquations
     changes = False
-    for eq in allEquations:
+    for eq in allEquations.copy():
+
+        if(eq not in allEquations):
+            continue
 
         #If the equation is empty  or there are no more vairables remove it
         if (len(eq) == 0 or len(eq[0]) == 0):
@@ -425,7 +428,7 @@ def findNewSafeOrMines():
 
 def removeCellFromAllEquations(cellNum, isMine):
     global allEquations, board
-    for eq in allEquations:
+    for eq in allEquations.copy():
         if cellNum in eq[0]:
             print("Removing cell " + str(cellNum) + " From equation: " + str(eq[0]))
             eq[0].remove(cellNum)
@@ -433,6 +436,8 @@ def removeCellFromAllEquations(cellNum, isMine):
                 print("Cell was a mine, substracting 1")
                 eq[1] -=1
             if(len(eq[0]) == 0):
+                if(eq not in allEquations):
+                    continue
                 allEquations.remove(eq)
 
 

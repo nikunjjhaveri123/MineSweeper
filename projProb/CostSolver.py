@@ -91,20 +91,16 @@ def simulateTurn():
 
             #this part wants to remove cells from safeCells that have all their neighbors revealed already
             NeighborsList = getNeighborIndices(cell)
-            print("The neighborList is: " + str(NeighborsList))
             hasUnopenedNeighbor = False
             for neighbor in NeighborsList:
                 if(neighbor == -1):
                     continue
                 nRow, nCol = getCoordinates(neighbor)
                 if(board.layout[nRow][nCol].shown == False):
-                    print("I have an unopened neighbor: " + str(neighbor))
                     hasUnopenedNeighbor = True
                     break
             if(hasUnopenedNeighbor == False):
                 #You can remove this from safeCells since all of it's neighbors are opened already anyways
-                drawBoard()
-                print("Removing from safeCells cell num: " + str(cell))
                 safeCells.remove(cell)
                 continue
 
@@ -466,7 +462,7 @@ def SolveConstraintEquations2(currEqList):
 def findNewSafeOrMines2(currEqList):
     newDiscoveredCells = list()
     changes = False
-    for eq in currEqList:
+    for eq in currEqList.copy():
 
         #If the equation is empty  or there are no more vairables remove it
         if (len(eq) == 0 or len(eq[0]) == 0):
@@ -491,7 +487,7 @@ def findNewSafeOrMines2(currEqList):
 
 def removeCellFromAllEquations(cellNum, isMine, currentEq):
     global board
-    for eq in currentEq:
+    for eq in currentEq.copy():
         if cellNum in eq[0]:
             #print("Removing cell " + str(cellNum) + " From equation: " + str(eq[0]))
             eq[0].remove(cellNum)
