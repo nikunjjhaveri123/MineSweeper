@@ -78,7 +78,10 @@ def simulateTurn():
     queriedCell  = -1
     QCells = []
     areSafe = False
+    drawBoard()
     if(len(safeCells) == 0):
+        print("Randomly picking. Safe cells: ", end = "")
+        print(str(safeCells))
         queriedCell = random.randint(0, board.d*board.d-1)
     else:
 
@@ -88,16 +91,20 @@ def simulateTurn():
 
             #this part wants to remove cells from safeCells that have all their neighbors revealed already
             NeighborsList = getNeighborIndices(cell)
+            print("The neighborList is: " + str(NeighborsList))
             hasUnopenedNeighbor = False
             for neighbor in NeighborsList:
                 if(neighbor == -1):
                     continue
                 nRow, nCol = getCoordinates(neighbor)
                 if(board.layout[nRow][nCol].shown == False):
-                    hasUnopenedNeighor = True
+                    print("I have an unopened neighbor: " + str(neighbor))
+                    hasUnopenedNeighbor = True
                     break
             if(hasUnopenedNeighbor == False):
                 #You can remove this from safeCells since all of it's neighbors are opened already anyways
+                drawBoard()
+                print("Removing from safeCells cell num: " + str(cell))
                 safeCells.remove(cell)
                 continue
 
@@ -133,11 +140,13 @@ def simulateTurn():
         else:
             if(board.layout[qCellRow][qCellCol].clue == -1):
                 #we opened a mine unknowingly
-                print("OPENING FROM simulate turn 1")
+                print("OPENING FROM simulate turn 1. Safe cells: ", end = "")
+                print(str(safeCells))
                 openCell(queriedCell, False)
             else:
                 #we opened a non  mine (second parameter could be true or false, doesn't matter)
-                print("OPENING FROM simulate turn 2")
+                print("OPENING FROM simulate turn 2. Safe cells: ", end = "")
+                print(str(safeCells))
                 openCell(queriedCell, True)
     else:
         for query in QCells:

@@ -93,7 +93,7 @@ def simulateTurn():
                     continue
                 nRow, nCol = getCoordinates(neighbor)
                 if(board.layout[nRow][nCol].shown == False):
-                    hasUnopenedNeighor = True
+                    hasUnopenedNeighbor = True
                     break
             if(hasUnopenedNeighbor == False):
                 #You can remove this from safeCells since all of it's neighbors are opened already anyways
