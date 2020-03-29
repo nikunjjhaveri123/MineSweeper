@@ -261,8 +261,8 @@ def openCell(cellNum, safelyIdentified):
             #useful to query on a cell whose clue is zero because when we do find
             #such a cell, we already dfs on all its neighboring zeros
             createConstraintEquation(cellNum)
-            allEquations = removeCellFromAllEquations(cellNum, False, allEquations)
             safeCells.add(cellNum)
+    allEquations = removeCellFromAllEquations(cellNum, False, allEquations)
     remainingCells.remove(cellNum)
     updateNeighbors(cellNum)
     #printAllEquations()
