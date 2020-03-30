@@ -462,12 +462,22 @@ def SolveConstraintEquations2(currEqList):
 def findNewSafeOrMines2(currEqList):
     newDiscoveredCells = list()
     changes = False
+    hasContradiction = False
     for eq in currEqList.copy():
 
         #If the equation is empty  or there are no more vairables remove it
         if (len(eq) == 0 or len(eq[0]) == 0):
+
+            #in the case where the left side is empty and the right side has a negative value, we know we have a contradiction
+            if(len(eq[0]) == 0 and eq[1] != 0):
+                hasContradiction = True
+                break
             currEqList.remove(eq)
             continue
+
+        if(eq[1] < 0 or len(eq[0]) > eq[1]):
+            hasContradiction = True
+            break
 
         #If the value for the equation is 0 all mines have been found and the rest of the neighbors are safeCells
         if eq[1] == 0:
@@ -483,7 +493,7 @@ def findNewSafeOrMines2(currEqList):
             currEqList.remove(eq)
             for cells in eq[0]:
                 newDiscoveredCells.append([cells, 1])
-    return newDiscoveredCells, currEqList
+    return newDiscoveredCells, currEqList, hasContradiction
 
 def removeCellFromAllEquations(cellNum, isMine, currentEq):
     global board
@@ -515,11 +525,11 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     configMine = deepCopyConfigs(currConfigList)
     configMine.append([chosenCell, 1])
     copyMineEq = SolveConstraintEquations2(copyMineEq)
-    newlyFoundCells, copyMineEq = findNewSafeOrMines2(copyMineEq)
-    for values in newlyFoundCells:
-        configMine.append(values)
-    masterConfigList = determineConfigs(copyMineEq, configMine, masterConfigList)
-
+    newlyFoundCells, copyMineEq, hasContradiction = findNewSafeOrMines2(copyMineEq)
+    if(hasContradiction == False):
+        for values in newlyFoundCells:
+            configMine.append(values)
+        masterConfigList = determineConfigs(copyMineEq, configMine, masterConfigList)
 
     copySafeEq = deepCopyEquations(currEqList)
     chosenCell = copySafeEq[0][0][0]
@@ -527,10 +537,11 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     configSafe = deepCopyConfigs(currConfigList)
     configSafe.append([chosenCell, 0])
     copySafeEq = SolveConstraintEquations2(copySafeEq)
-    newlyFoundCells, copySafeEq = findNewSafeOrMines2(copySafeEq)
-    for values in newlyFoundCells:
-        configSafe.append(values)
-    masterConfigList = determineConfigs(copySafeEq, configSafe, masterConfigList)
+    newlyFoundCells, copySafeEq, hasContradiction = findNewSafeOrMines2(copySafeEq)
+    if(hasContradiction == False):
+        for values in newlyFoundCells:
+            configSafe.append(values)
+        masterConfigList = determineConfigs(copySafeEq, configSafe, masterConfigList)
 
     return masterConfigList
 
