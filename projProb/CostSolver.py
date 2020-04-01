@@ -475,7 +475,7 @@ def findNewSafeOrMines2(currEqList):
             currEqList.remove(eq)
             continue
 
-        if(eq[1] < 0 or len(eq[0]) > eq[1]):
+        if(eq[1] < 0 or len(eq[0]) < eq[1]):
             hasContradiction = True
             break
 
