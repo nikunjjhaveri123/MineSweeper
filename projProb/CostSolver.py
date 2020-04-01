@@ -465,11 +465,14 @@ def findNewSafeOrMines2(currEqList):
     hasContradiction = False
     for eq in currEqList.copy():
 
-        #If the equation is empty  or there are no more vairables remove it
-        if (len(eq) == 0 or len(eq[0]) == 0):
+        if(len(eq) == 0):
+            currEqList.remove(eq)
+            continue
 
-            #in the case where the left side is empty and the right side has a negative value, we know we have a contradiction
-            if(len(eq[0]) == 0 and eq[1] != 0):
+        #If the equation is empty  or there are no more vairables remove it
+        if (len(eq[0]) == 0):
+            #in the case where the left side is empty and the right side has a nonzero value, we know we have a contradiction
+            if(eq[1] != 0):
                 hasContradiction = True
                 break
             currEqList.remove(eq)
