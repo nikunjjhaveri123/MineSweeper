@@ -80,7 +80,7 @@ def simulateTurn():
     if(len(safeCells) == 0):
         queriedCell = random.randint(0, board.d*board.d-1)
     else:
-        printAllEquations()
+        #printAllEquations()
         foundOne = False
         safeCellsCopy = safeCells.copy()
         for cell in safeCellsCopy:
@@ -109,30 +109,30 @@ def simulateTurn():
             #Could not find any safe cells from single clues. Will not use the constraint equations to look at relationships between cells to identify mines/safe cells
             foundNewCells = SolveConstraintEquations()
             if(foundNewCells == True):
-                print("FOUND STUFF USING EQUATIONS")
+                #print("FOUND STUFF USING EQUATIONS")
                 return
             #Could not find any cells that can conclusively be identified as safe
             #Thus, we are choosing at random from the remainingCells set
             else:
-                print("Picking At Random")
+                #print("Picking At Random")
                 queriedCell = random.choice(tuple(remainingCells))
 
     if(queriedCell > -1):
         #we don't have a list of cells to query, just one
         qCellRow, qCellCol = getCoordinates(queriedCell)
-        print("Queried Cell: " + str(queriedCell))
-        print("Queried Cell Clue: " + str(board.layout[qCellRow][qCellCol].clue))
+        #print("Queried Cell: " + str(queriedCell))
+        #print("Queried Cell Clue: " + str(board.layout[qCellRow][qCellCol].clue))
         if(board.layout[qCellRow][qCellCol].clue == 0):
             #DFSOnZeros takes care of opening the necessary cells
             DFSOnZeros(queriedCell)
         else:
             if(board.layout[qCellRow][qCellCol].clue == -1):
                 #we opened a mine unknowingly
-                print("OPENING FROM simulate turn 1")
+                #print("OPENING FROM simulate turn 1")
                 openCell(queriedCell, False)
             else:
                 #we opened a non  mine (second parameter could be true or false, doesn't matter)
-                print("OPENING FROM Simulate turn 2")
+                #print("OPENING FROM Simulate turn 2")
                 openCell(queriedCell, True)
     else:
         for query in QCells:
@@ -146,9 +146,9 @@ def simulateTurn():
                 #more than once on the same cell
                 DFSOnZeros(query)
             else:
-                print("OPENING FROM Simulate turn 3")
+                #print("OPENING FROM Simulate turn 3")
                 openCell(query, True)
-    drawBoard()
+    #drawBoard()
 
 #should take in the number of a cell and update all 8 of it's neighbors with the
 #necessary information. In this method, the given cell should be shown (opened) already
@@ -228,11 +228,11 @@ def openCell(cellNum, safelyIdentified):
 
     if(board.layout[cellRow][cellCol].shown == True):
         #Error catching, don't remove
-        print("There may be a problem here. openCell() is being called more than once on cellNum: " + str(cellNum))
-        print("ENDING OPENCELL() ABRUPTLY")
+        #print("There may be a problem here. openCell() is being called more than once on cellNum: " + str(cellNum))
+        #print("ENDING OPENCELL() ABRUPTLY")
         return
     board.layout[cellRow][cellCol].shown = True
-    print("OPENING CELL: " + str(cellNum))
+    #print("OPENING CELL: " + str(cellNum))
     if(board.layout[cellRow][cellCol].clue == -1):
         #cell is a mine
         if(safelyIdentified == True):
@@ -283,8 +283,6 @@ def findNeighboringSafesOrMines(cellNum):
         iRow, iCol = getCoordinates(i)
         if(board.layout[iRow][iCol].shown == False):
             Neighbors.append(i)
-    print("Found Neighbors: ", end="")
-    print(Neighbors)
     return Neighbors, allSafes
 
 #This recursive method assumes that the input cellNum of the first call
@@ -304,7 +302,7 @@ def DFSOnZeros(cellNum):
         return
 
     #second parameter here is true since we know that we will never hit a mine in this method
-    print("OPENING FROM DFS ON ZERO")
+    #print("OPENING FROM DFS ON ZERO")
     openCell(cellNum, True)
 
     if(board.layout[cellRow][cellCol].clue > 0):
@@ -347,7 +345,7 @@ def createConstraintEquation(cellNum):
 
         #If neighbor is already a mine then do not add but subtract the constraint value
         if (board.layout[iRow][iCol].shown == True and board.layout[iRow][iCol].clue == -1):
-            print("Subtracting value for blown up mine")
+            #print("Subtracting value for blown up mine")
             board.layout[row][col].constraintValue -=1
             continue
 
@@ -374,14 +372,14 @@ def SolveConstraintEquations():
 
             # Check if the equation is a subset of the other equations
             if set(e1[0]).issubset(set(e2[0])):
-                print("FOUND SUBSET")
+                #print("FOUND SUBSET")
                 e2[0] = list(set(e2[0]) - set(e1[0]))
                 e2[1] -= e1[1]
                 continue
 
             # Check if the equation is a superset of the other equations
             if set(e2[0]).issubset(set(e1[0])):
-                print("FOUND SUPERSET")
+                #print("FOUND SUPERSET")
                 e1[0] = list(set(e1[0]) - set(e2[0]))
                 e1[1] -= e2[1]
 
@@ -400,7 +398,7 @@ def findNewSafeOrMines():
         #If the equation is empty  or there are no more vairables remove it
         if (len(eq) == 0 or len(eq[0]) == 0):
             allEquations.remove(eq)
-            print("REMOVED EQUATION")
+            #print("REMOVED EQUATION")
             continue
 
         #If the value for the equation is 0 all mines have been found and the rest of the neighbors are safeCells
@@ -412,7 +410,7 @@ def findNewSafeOrMines():
                 if(board.layout[row][col].clue == 0):
                     DFSOnZeros(cells)
                 else:
-                    print("OPENING FROM SOLVING EQUATIONS 1")
+                    #print("OPENING FROM SOLVING EQUATIONS 1")
                     openCell(cells, True)
 
             continue
@@ -422,7 +420,7 @@ def findNewSafeOrMines():
             changes = True
             allEquations.remove(eq)
             for cells in eq[0]:
-                print("OPENING FROM SOLVING EQUATIONS 2")
+                #print("OPENING FROM SOLVING EQUATIONS 2")
                 openCell(cells, True)
     return changes
 
@@ -430,10 +428,10 @@ def removeCellFromAllEquations(cellNum, isMine):
     global allEquations, board
     for eq in allEquations.copy():
         if cellNum in eq[0]:
-            print("Removing cell " + str(cellNum) + " From equation: " + str(eq[0]))
+            #print("Removing cell " + str(cellNum) + " From equation: " + str(eq[0]))
             eq[0].remove(cellNum)
             if isMine:
-                print("Cell was a mine, substracting 1")
+                #print("Cell was a mine, substracting 1")
                 eq[1] -=1
             if(len(eq[0]) == 0):
                 if(eq not in allEquations):
