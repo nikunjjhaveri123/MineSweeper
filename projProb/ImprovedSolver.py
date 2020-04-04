@@ -340,7 +340,7 @@ def createConstraintEquation(cellNum):
 
         # If a neighbour is already flagged, then do not add it to the equation but subtract the constraint value by 1
         if (board.layout[iRow][iCol].flagged == True):
-            board.layout[iRow][iCol].constraintValue -=1
+            board.layout[row][col].constraintValue -=1
             continue
 
         #If neighbor is already a mine then do not add but subtract the constraint value
