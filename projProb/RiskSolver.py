@@ -124,8 +124,12 @@ def simulateTurn():
                 #queriedCell = random.choice(tuple(remainingCells))
                 configList = list()
                 masterConfigList = list()
-                configList = determineConfigs(allEquations, configList, masterConfigList)
-                probabilities = calculateProbabliites(configList)
+                masterConfigList = determineConfigs(allEquations, configList, masterConfigList)
+                if len(masterConfigList) == 0:
+                    print("ENDED CODEEEEEEE")
+                    exit()
+                print("SIZE OF MASTER LIST: " + str(len(masterConfigList)))
+                probabilities = calculateProbabliites(masterConfigList)
                 queriedCell = determineExpectedSquares(probabilities)
                 print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
                 unknownSqCount += 1
@@ -259,7 +263,7 @@ def openCell(cellNum, safelyIdentified):
             allEquations = removeCellFromAllEquations(cellNum, True, allEquations)
     else:
         #cell is not a mines
-
+        allEquations = removeCellFromAllEquations(cellNum, False, allEquations)
         if(board.layout[cellRow][cellCol].clue != 0):
             #you don't need to add cells with clue = 0 to safe cells because
             #safe cells is only used to pick the next cell to query. It is never
@@ -267,9 +271,9 @@ def openCell(cellNum, safelyIdentified):
             #such a cell, we already dfs on all its neighboring zeros
             createConstraintEquation(cellNum)
             safeCells.add(cellNum)
-    allEquations = removeCellFromAllEquations(cellNum, False, allEquations)
     remainingCells.remove(cellNum)
-    borderingCells.remove(cellNum)
+    if cellNum in borderingCells:
+        borderingCells.remove(cellNum)
     updateNeighbors(cellNum)
     #printAllEquations()
 
@@ -508,15 +512,16 @@ def findNewSafeOrMines2(currEqList):
 
 def removeCellFromAllEquations(cellNum, isMine, currentEq):
     global board
-    for eq in currentEq.copy():
+    for eq in currentEq:
         if cellNum in eq[0]:
             #print("Removing cell " + str(cellNum) + " From equation: " + str(eq[0]))
             eq[0].remove(cellNum)
             if isMine:
                 #print("Cell was a mine, substracting 1")
                 eq[1] -=1
-            if(len(eq[0]) == 0):
-                currentEq.remove(eq)
+    for eq_ in currentEq.copy():
+        if(len(eq_[0]) == 0):
+            currentEq.remove(eq_)
     return currentEq
 
 def determineConfigs(currEqList, currConfigList, masterConfigList):
@@ -529,15 +534,18 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     # print("THIS IS THE CURRENT EQ:")
     # print(currEqList)
     copyMineEq = deepCopyEquations(currEqList)
-    # print("THIS IS DEEP COPY")
-    # print(copyMineEq)
+    print("THIS IS DEEP COPY")
+    print(copyMineEq)
     chosenCell = copyMineEq[0][0][0]
     copyMineEq = removeCellFromAllEquations(chosenCell, True, copyMineEq)
     configMine = deepCopyConfigs(currConfigList)
     configMine.append([chosenCell, 1])
+    #print("size of mine config list: " + str(len(configMine)))
     copyMineEq = SolveConstraintEquations2(copyMineEq)
+
     newlyFoundCells, copyMineEq, hasContradiction = findNewSafeOrMines2(copyMineEq)
     if(hasContradiction == False):
+        print("does not have contradiction for being mine")
         for values in newlyFoundCells:
             configMine.append(values)
         masterConfigList = determineConfigs(copyMineEq, configMine, masterConfigList)
@@ -547,9 +555,11 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     copySafeEq = removeCellFromAllEquations(chosenCell, False, copySafeEq)
     configSafe = deepCopyConfigs(currConfigList)
     configSafe.append([chosenCell, 0])
+    #print("size of safe config list: " + str(len(configSafe)))
     copySafeEq = SolveConstraintEquations2(copySafeEq)
     newlyFoundCells, copySafeEq, hasContradiction = findNewSafeOrMines2(copySafeEq)
     if(hasContradiction == False):
+        print("does not have contradiction for being safe")
         for values in newlyFoundCells:
             configSafe.append(values)
         masterConfigList = determineConfigs(copySafeEq, configSafe, masterConfigList)
@@ -561,6 +571,7 @@ def calculateProbabliites(configList):
     allCells = {}
     foundProbableCell = False
     # print(configList)
+    print("SIZE OF CONFIG LIST: " + str(len(configList)))
     for config in configList:
         for cell in config:
             if cell[1] == 1:
@@ -593,33 +604,33 @@ def calculateProbabliites(configList):
     #     for cell in remainingCells:
     #         cellToPick = cell
     #         break
-
+    print("SIZE FROM DETEMRINING PROBS: " + str(len(allCells)))
     return allCells
 
 def determineExpectedSquares(probabilities):
     global borderingCells, allEquations
     expectedSquares = {}
-    maxValue = 0
+    maxValue = -1
     cellToPick = -1
-    for cell in borderingCells:
+    print("SIZE OF PROBS: " + str(len(probabilities)))
+    for cell in probabilities:
         exFromSafe = 0
         exFromMine = 0
-        copyMineEq = deepCopyEquations(currEqList)
+        copyMineEq = deepCopyEquations(allEquations)
         copyMineEq = removeCellFromAllEquations(cell, True, copyMineEq)
-        configMine = deepCopyConfigs(currConfigList)
         copyMineEq = SolveConstraintEquations2(copyMineEq)
         newlyFoundCells, copyMineEq, hasContradiction = findNewSafeOrMines2(copyMineEq)
         if(hasContradiction == False):
             exFromMine = len(newlyFoundCells)
 
-        copySafeEq = deepCopyEquations(currEqList)
+        copySafeEq = deepCopyEquations(allEquations)
         copySafeEq = removeCellFromAllEquations(cell, False, copySafeEq)
-        configSafe = deepCopyConfigs(currConfigList)
         copySafeEq = SolveConstraintEquations2(copySafeEq)
         newlyFoundCells, copySafeEq, hasContradiction = findNewSafeOrMines2(copySafeEq)
         if(hasContradiction == False):
             exFromSafe = len(newlyFoundCells)
-
+        if cell not in probabilities.keys():
+            print( "ERROR CELL DOES NOT HAVE PROBABility: Cell Number: " + str(cell))
         expectedSquares[cell] = probabilities[cell] * exFromMine + ((1 - probabilities[cell]) * exFromSafe)
         if(maxValue < expectedSquares[cell]):
             maxValue = expectedSquares[cell]
