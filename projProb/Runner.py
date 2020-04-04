@@ -3,6 +3,7 @@ import csv
 import math
 import ImprovedSolver
 import CostSolver
+import RiskSolver
 
 #This class is used to create and run tests for the minimizing cost and risk solvers vs the basic mine sweeper solver agent from project 2.
 def main():
@@ -78,7 +79,7 @@ def main():
     # file = open('minRiskAgentPerformance.csv', 'w+')
 
     #Places results for the minimizing risk solver in the minCostAgentPerformance.csv file
-    with open('minRiskAgentPerformance.csv', 'a') as file:
+    with open('minRiskAgentPerformance.csv', 'w') as file:
         writer = csv.writer(file)
         writer.writerow(["Mine Density", "Average Cost"])
 
@@ -96,11 +97,11 @@ def main():
 
             no_mines = int(math.ceil(dimension*dimension*mineDensity))
 
-            minesSafelyFound, minesFound = RiskSolver.initialize(dimension, no_mines) # will utilize the basic solver agent in the Solver.py class to geenrate the board and solve it and return the results
+            minesSafelyFound, unknownSqCount = RiskSolver.initialize(dimension, no_mines) # will utilize the basic solver agent in the Solver.py class to geenrate the board and solve it and return the results
 
             #writer.writerow([mineDensity, no_mines-minesSafelyFound])
 
-            totalCost += no_mines-minesSafelyFound #calculate the total cost over all tests for a certain density
+            totalCost += unknownSqCount #calculate the total cost over all tests for a certain density
             #totalMines += minesFound #calculate the total number of mines found over all tests for a certain density
 
           averageFinalCost = totalCost / iterations #caluculate average final cost

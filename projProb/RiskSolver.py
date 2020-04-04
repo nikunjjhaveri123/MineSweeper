@@ -30,6 +30,7 @@ borderingCells = set()
 minesFound = 0
 minesSafelyFound = 0
 allEquations = list()
+unknownSqCount = 0
 
 def main():
     global board, safeCells, remainingCells, minesFound
@@ -71,10 +72,10 @@ def solve():
 
     print("Total number of Mines Safely Identified: " + str(minesSafelyFound) + " Out of: " + str(board.n))
 
-    return minesSafelyFound, minesFound
+    return minesSafelyFound, unknownSqCount
 
 def simulateTurn():
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations, unknownSqCount
 
     queriedCell  = -1
     QCells = []
@@ -84,6 +85,7 @@ def simulateTurn():
         print("Randomly picking. Safe cells: ", end = "")
         print(str(safeCells))
         queriedCell = random.randint(0, board.d*board.d-1)
+        unknownSqCount += 1
     else:
 
         foundOne = False
@@ -126,6 +128,7 @@ def simulateTurn():
                 probabilities = calculateProbabliites(configList)
                 queriedCell = determineExpectedSquares(probabilities)
                 print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
+                unknownSqCount += 1
 
     if(queriedCell > -1):
         #we don't have a list of cells to query, just one
