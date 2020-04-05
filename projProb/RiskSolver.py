@@ -3,9 +3,7 @@
 import sys
 import argparse
 from Board import Board
-from collections import deque
 import random
-from itertools import product
 
 
 ###########################  CONSTANTS  ###########################
@@ -534,8 +532,8 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     # print("THIS IS THE CURRENT EQ:")
     # print(currEqList)
     copyMineEq = deepCopyEquations(currEqList)
-    print("THIS IS DEEP COPY")
-    print(copyMineEq)
+    #print("THIS IS DEEP COPY")
+    #print(copyMineEq)
     chosenCell = copyMineEq[0][0][0]
     copyMineEq = removeCellFromAllEquations(chosenCell, True, copyMineEq)
     configMine = deepCopyConfigs(currConfigList)
@@ -545,7 +543,7 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
 
     newlyFoundCells, copyMineEq, hasContradiction = findNewSafeOrMines2(copyMineEq)
     if(hasContradiction == False):
-        print("does not have contradiction for being mine")
+        #print("does not have contradiction for being mine")
         for values in newlyFoundCells:
             configMine.append(values)
         masterConfigList = determineConfigs(copyMineEq, configMine, masterConfigList)
@@ -559,7 +557,7 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     copySafeEq = SolveConstraintEquations2(copySafeEq)
     newlyFoundCells, copySafeEq, hasContradiction = findNewSafeOrMines2(copySafeEq)
     if(hasContradiction == False):
-        print("does not have contradiction for being safe")
+        #print("does not have contradiction for being safe")
         for values in newlyFoundCells:
             configSafe.append(values)
         masterConfigList = determineConfigs(copySafeEq, configSafe, masterConfigList)

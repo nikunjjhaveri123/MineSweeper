@@ -3,10 +3,7 @@
 import sys
 import argparse
 from Board import Board
-from collections import deque
 import random
-from itertools import product
-
 
 ###########################  CONSTANTS  ###########################
 TOPLEFTINDEX = 0
@@ -110,7 +107,7 @@ def simulateTurn():
                 foundOne = True
                 break
         if(foundOne == False):
-            #Could not find any safe cells from single clues. Will not use the constraint equations to look at relationships between cells to identify mines/safe cells
+            #Could not find any safe cells from single clues. Will now use the constraint equations to look at relationships between cells to identify mines/safe cells
             foundNewCells = SolveConstraintEquations()
             if(foundNewCells == True):
                 ####################print("FOUND STUFF USING EQUATIONS")
@@ -254,7 +251,7 @@ def openCell(cellNum, safelyIdentified):
             allEquations = removeCellFromAllEquations(cellNum, True, allEquations)
     else:
         #cell is not a mines
-
+        allEquations = removeCellFromAllEquations(cellNum, False, allEquations)
         if(board.layout[cellRow][cellCol].clue != 0):
             #you don't need to add cells with clue = 0 to safe cells because
             #safe cells is only used to pick the next cell to query. It is never
@@ -262,7 +259,6 @@ def openCell(cellNum, safelyIdentified):
             #such a cell, we already dfs on all its neighboring zeros
             createConstraintEquation(cellNum)
             safeCells.add(cellNum)
-    allEquations = removeCellFromAllEquations(cellNum, False, allEquations)
     remainingCells.remove(cellNum)
     updateNeighbors(cellNum)
     #printAllEquations()
@@ -500,15 +496,16 @@ def findNewSafeOrMines2(currEqList):
 
 def removeCellFromAllEquations(cellNum, isMine, currentEq):
     global board
-    for eq in currentEq.copy():
+    for eq in currentEq:
         if cellNum in eq[0]:
             #print("Removing cell " + str(cellNum) + " From equation: " + str(eq[0]))
             eq[0].remove(cellNum)
             if isMine:
                 #print("Cell was a mine, substracting 1")
                 eq[1] -=1
-            if(len(eq[0]) == 0):
-                currentEq.remove(eq)
+    for eq_ in currentEq.copy():
+        if(len(eq_[0]) == 0):
+            currentEq.remove(eq_)
     return currentEq
 
 def determineConfigs(currEqList, currConfigList, masterConfigList):
