@@ -44,8 +44,13 @@ def initialize(d, n):
 
     global board, safeCells, remainingCells, minesSafelyFound, minesFound
 
+    safeCells = set()
+    remainingCells = set()
+    borderingCells = set()
     minesFound = 0
     minesSafelyFound = 0
+    allEquations = list()
+    unknownSqCount = 0
 
     board = Board(d, n)
     for i in range(0, board.d*board.d):
@@ -130,6 +135,10 @@ def simulateTurn():
                 probabilities = calculateProbabliites(masterConfigList)
                 queriedCell = determineExpectedSquares(probabilities)
                 print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
+                if(queriedCell == -1):
+                    print("PRINTING OUT CONFIGS LIST", end="")
+                    print(masterConfigList)
+                    exit()
                 unknownSqCount += 1
 
     if(queriedCell > -1):
