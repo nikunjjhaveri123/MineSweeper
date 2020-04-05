@@ -78,7 +78,7 @@ def simulateTurn():
     queriedCell  = -1
     QCells = []
     areSafe = False
-    drawBoard()
+    #drawBoard()
     if(len(safeCells) == 0):
         print("Randomly picking. Safe cells: ", end = "")
         print(str(safeCells))
