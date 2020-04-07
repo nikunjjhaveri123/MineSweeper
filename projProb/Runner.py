@@ -51,10 +51,10 @@ def main():
     #Places results for the minimizing cost solver in the minCostAgentPerformance.csv file
     with open('minCostAgentPerformance.csv', 'a') as file:
         writer = csv.writer(file)
-        writer.writerow(["Mine Density", "Average Cost"])
+        #writer.writerow(["Mine Density", "Average Cost"])
 
         dimension = 15 #dimension of HARD Minesweeper board
-        mineDensity = 0.05 # starting mine density
+        mineDensity = 0.75 # starting mine density
 
         while mineDensity <= 0.95: # will test mine densities up to a density of 0.9
 
