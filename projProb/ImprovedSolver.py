@@ -28,6 +28,7 @@ remainingCells = set()
 minesFound = 0
 minesSafelyFound = 0
 allEquations = list()
+unknownSqCount = 0
 
 def main():
     global board, safeCells, remainingCells, minesFound
@@ -41,10 +42,11 @@ def main():
 
 def initialize(d, n):
 
-    global board, safeCells, remainingCells, minesSafelyFound, minesFound
+    global board, safeCells, remainingCells, minesSafelyFound, minesFound, unknownSqCount
 
     minesFound = 0
     minesSafelyFound = 0
+    unknownSqCount = 0
 
     board = Board(d, n)
     for i in range(0, board.d*board.d):
@@ -62,23 +64,28 @@ def getCoordinates(num):
 
 def solve():
     # write method to solve minesweeper board here
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, unknownSqCount
+    count = 0
     while(len(remainingCells) > 0):
+        count += 1
         simulateTurn()
 
 
     print("Total number of Mines Safely Identified: " + str(minesSafelyFound) + " Out of: " + str(board.n))
+    print("Total number of Squares unknowingly stepped on: " + str(unknownSqCount))
+    print("simulateTurn() was called " + str(count) + " times")
 
-    return minesSafelyFound, minesFound
+    return minesSafelyFound, unknownSqCount
 
 def simulateTurn():
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, unknownSqCount
 
     queriedCell  = -1
     QCells = []
     areSafe = False
     if(len(safeCells) == 0):
         queriedCell = random.randint(0, board.d*board.d-1)
+        unknownSqCount += 1
     else:
         #printAllEquations()
         foundOne = False
@@ -116,6 +123,7 @@ def simulateTurn():
             else:
                 #print("Picking At Random")
                 queriedCell = random.choice(tuple(remainingCells))
+                unknownSqCount += 1
 
     if(queriedCell > -1):
         #we don't have a list of cells to query, just one
