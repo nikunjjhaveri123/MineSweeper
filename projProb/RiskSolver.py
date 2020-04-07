@@ -127,17 +127,17 @@ def simulateTurn():
                 configList = list()
                 masterConfigList = list()
                 masterConfigList = determineConfigs(allEquations, configList, masterConfigList)
-                print("SIZE OF MASTER LIST: " + str(len(masterConfigList)))
+                #print("SIZE OF MASTER LIST: " + str(len(masterConfigList)))
                 probabilities = calculateProbabliites(masterConfigList)
                 queriedCell = determineExpectedSquares(probabilities)
-                print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
-                if(queriedCell == -1):
-                    print("PRINTING OUT CONFIGS LIST", end="")
-                    print(masterConfigList)
-                    print("PRINTING OUT Equations LIST", end="")
-                    print(allEquations)
-                    print('Size of Equations list: ' + str(len(allEquations)))
-                    drawBoard()
+                #print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
+                # if(queriedCell == -1):
+                #     # print("PRINTING OUT CONFIGS LIST", end="")
+                #     # print(masterConfigList)
+                #     # print("PRINTING OUT Equations LIST", end="")
+                #     # print(allEquations)
+                #     # print('Size of Equations list: ' + str(len(allEquations)))
+                #     # drawBoard()
                 unknownSqCount += 1
 
             else:
@@ -155,13 +155,13 @@ def simulateTurn():
         else:
             if(board.layout[qCellRow][qCellCol].clue == -1):
                 #we opened a mine unknowingly
-                print("OPENING FROM simulate turn 1. Safe cells: ", end = "")
-                print(str(safeCells))
+                # print("OPENING FROM simulate turn 1. Safe cells: ", end = "")
+                # print(str(safeCells))
                 openCell(queriedCell, False)
             else:
                 #we opened a non  mine (second parameter could be true or false, doesn't matter)
-                print("OPENING FROM simulate turn 2. Safe cells: ", end = "")
-                print(str(safeCells))
+                # print("OPENING FROM simulate turn 2. Safe cells: ", end = "")
+                # print(str(safeCells))
                 openCell(queriedCell, True)
     else:
         for query in QCells:
@@ -175,7 +175,7 @@ def simulateTurn():
                 #more than once on the same cell
                 DFSOnZeros(query)
             else:
-                print("OPENING FROM simulate turn 3")
+                #print("OPENING FROM simulate turn 3")
                 openCell(query, True)
     #drawBoard()
 
@@ -332,7 +332,7 @@ def DFSOnZeros(cellNum):
         return
 
     #second parameter here is true since we know that we will never hit a mine in this method
-    print("OPENING FROM DFS ON ZERO")
+    #print("OPENING FROM DFS ON ZERO")
     openCell(cellNum, True)
 
     if(board.layout[cellRow][cellCol].clue > 0):
@@ -438,7 +438,7 @@ def findNewSafeOrMines():
                 if(board.layout[row][col].clue == 0):
                     DFSOnZeros(cells)
                 else:
-                    print("OPENING FROM SOLVING EQUATIONS 1")
+                    #print("OPENING FROM SOLVING EQUATIONS 1")
                     openCell(cells, True)
 
             continue
@@ -448,7 +448,7 @@ def findNewSafeOrMines():
             changes = True
             allEquations.remove(eq)
             for cells in eq[0]:
-                print("OPENING FROM SOLVING EQUATIONS 2")
+                #print("OPENING FROM SOLVING EQUATIONS 2")
                 openCell(cells, True)
     return changes
 
@@ -555,6 +555,7 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
         #print("does not have contradiction for being mine")
         for values in newlyFoundCells:
             configMine.append(values)
+            copyMineEq = removeCellFromAllEquations(values[0], True if values[1]==1 else False, copyMineEq)
         masterConfigList = determineConfigs(copyMineEq, configMine, masterConfigList)
 
     #trying to free some memory
@@ -574,6 +575,7 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
         #print("does not have contradiction for being safe")
         for values in newlyFoundCells:
             configSafe.append(values)
+            copySafeEq = removeCellFromAllEquations(values[0], True if values[1]==1 else False, copySafeEq)
         masterConfigList = determineConfigs(copySafeEq, configSafe, masterConfigList)
 
     #trying to free some memory
@@ -588,7 +590,7 @@ def calculateProbabliites(configList):
     allCells = {}
     foundProbableCell = False
     # print(configList)
-    print("SIZE OF CONFIG LIST: " + str(len(configList)))
+    #print("SIZE OF CONFIG LIST: " + str(len(configList)))
     for config in configList:
         for cell in config:
             if cell[1] == 1:
@@ -621,7 +623,7 @@ def calculateProbabliites(configList):
     #     for cell in remainingCells:
     #         cellToPick = cell
     #         break
-    print("SIZE FROM DETEMRINING PROBS: " + str(len(allCells)))
+    #print("SIZE FROM DETEMRINING PROBS: " + str(len(allCells)))
     return allCells
 
 def determineExpectedSquares(probabilities):
@@ -629,7 +631,7 @@ def determineExpectedSquares(probabilities):
     expectedSquares = {}
     maxValue = -1
     cellToPick = -1
-    print("SIZE OF PROBS: " + str(len(probabilities)))
+    #print("SIZE OF PROBS: " + str(len(probabilities)))
     for cell in probabilities:
         exFromSafe = 0
         exFromMine = 0
@@ -655,13 +657,13 @@ def determineExpectedSquares(probabilities):
         if(hasContradiction == False):
             exFromSafe = len(newlyFoundCells)
         if cell not in probabilities.keys():
-            print( "ERROR CELL DOES NOT HAVE PROBABility: Cell Number: " + str(cell))
+            #print( "ERROR CELL DOES NOT HAVE PROBABility: Cell Number: " + str(cell))
         expectedSquares[cell] = probabilities[cell] * exFromMine + ((1 - probabilities[cell]) * exFromSafe)
         if(maxValue < expectedSquares[cell]):
             maxValue = expectedSquares[cell]
             cellToPick = cell
     if(cellToPick == -1):
-        print("NO CELLS FOUND GO CHOOSE A RANDOM CELL")
+        #print("NO CELLS FOUND GO CHOOSE A RANDOM CELL")
     return cellToPick
 #Prints out all the current constraint equations for the board
 def printAllEquations():

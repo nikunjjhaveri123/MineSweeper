@@ -118,13 +118,15 @@ def simulateTurn():
                 QCells, areSafe = findNeighboringSafesOrMines(cell)
             #Could not find any cells that can conclusively be identified as safe
             #Thus, we are choosing at random from the remainingCells set
-            else:
+            elif len(allEquations) > 0 :
                 #queriedCell = random.choice(tuple(remainingCells))
                 configList = list()
                 masterConfigList = list()
                 configList = determineConfigs(allEquations, configList, masterConfigList)
                 queriedCell = calculateProbabliites(configList)
                 #print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
+            else:
+                queriedCell = random.choice(tuple(remainingCells))
 
     if(queriedCell > -1):
         #we don't have a list of cells to query, just one
@@ -533,7 +535,13 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     if(hasContradiction == False):
         for values in newlyFoundCells:
             configMine.append(values)
+            copyMineEq = removeCellFromAllEquations(values[0], True if values[1]==1 else False, copyMineEq)
         masterConfigList = determineConfigs(copyMineEq, configMine, masterConfigList)
+
+    #trying to free some memory
+    copyMineEq = None
+    configMine = None
+    newlyFoundCells = None
 
     copySafeEq = deepCopyEquations(currEqList)
     chosenCell = copySafeEq[0][0][0]
@@ -545,7 +553,13 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
     if(hasContradiction == False):
         for values in newlyFoundCells:
             configSafe.append(values)
+            copySafeEq = removeCellFromAllEquations(values[0], True if values[1]==1 else False, copySafeEq)
         masterConfigList = determineConfigs(copySafeEq, configSafe, masterConfigList)
+
+    #trying to free some memory
+    copySafeEq = None
+    configSafe = None
+    newlyFoundCells = None
 
     return masterConfigList
 
