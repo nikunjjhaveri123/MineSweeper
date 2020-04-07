@@ -656,13 +656,13 @@ def determineExpectedSquares(probabilities):
 
         if(hasContradiction == False):
             exFromSafe = len(newlyFoundCells)
-        if cell not in probabilities.keys():
+        #if cell not in probabilities.keys():
             #print( "ERROR CELL DOES NOT HAVE PROBABility: Cell Number: " + str(cell))
         expectedSquares[cell] = probabilities[cell] * exFromMine + ((1 - probabilities[cell]) * exFromSafe)
         if(maxValue < expectedSquares[cell]):
             maxValue = expectedSquares[cell]
             cellToPick = cell
-    if(cellToPick == -1):
+    #if(cellToPick == -1):
         #print("NO CELLS FOUND GO CHOOSE A RANDOM CELL")
     return cellToPick
 #Prints out all the current constraint equations for the board
