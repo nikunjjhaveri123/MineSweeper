@@ -119,7 +119,7 @@ def simulateTurn():
             foundNewCells = SolveConstraintEquations()
             if(foundNewCells == True):
                 ####################print("FOUND STUFF USING EQUATIONS")
-                return
+                QCells, areSafe = findNeighboringSafesOrMines(cell)
             #Could not find any cells that can conclusively be identified as safe
             #Thus, we are choosing at random from the remainingCells set
             else:
@@ -137,6 +137,9 @@ def simulateTurn():
                 if(queriedCell == -1):
                     print("PRINTING OUT CONFIGS LIST", end="")
                     print(masterConfigList)
+                    print("PRINTING OUT Equations LIST", end="")
+                    print(allEquations)
+                    drawBoard()
                     exit()
                 unknownSqCount += 1
 
