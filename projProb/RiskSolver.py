@@ -122,14 +122,11 @@ def simulateTurn():
                 QCells, areSafe = findNeighboringSafesOrMines(cell)
             #Could not find any cells that can conclusively be identified as safe
             #Thus, we are choosing at random from the remainingCells set
-            else:
+            elif len(allEquations) > 0 :
                 #queriedCell = random.choice(tuple(remainingCells))
                 configList = list()
                 masterConfigList = list()
                 masterConfigList = determineConfigs(allEquations, configList, masterConfigList)
-                if len(masterConfigList) == 0:
-                    print("ENDED CODEEEEEEE")
-                    exit()
                 print("SIZE OF MASTER LIST: " + str(len(masterConfigList)))
                 probabilities = calculateProbabliites(masterConfigList)
                 queriedCell = determineExpectedSquares(probabilities)
@@ -139,8 +136,12 @@ def simulateTurn():
                     print(masterConfigList)
                     print("PRINTING OUT Equations LIST", end="")
                     print(allEquations)
+                    print('Size of Equations list: ' + str(len(allEquations)))
                     drawBoard()
-                    exit()
+                unknownSqCount += 1
+
+            else:
+                queriedCell = random.choice(tuple(remainingCells))
                 unknownSqCount += 1
 
     if(queriedCell > -1):
