@@ -42,7 +42,7 @@ def main():
 
 def initialize(d, n):
 
-    global board, safeCells, remainingCells, minesSafelyFound, minesFound
+    global board, safeCells, remainingCells, minesSafelyFound, minesFound, unknownSqCount
 
     safeCells = set()
     remainingCells = set()
@@ -557,6 +557,11 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
             configMine.append(values)
         masterConfigList = determineConfigs(copyMineEq, configMine, masterConfigList)
 
+    #trying to free some memory
+    copyMineEq = None
+    configMine = None
+    newlyFoundCells = None
+
     copySafeEq = deepCopyEquations(currEqList)
     chosenCell = copySafeEq[0][0][0]
     copySafeEq = removeCellFromAllEquations(chosenCell, False, copySafeEq)
@@ -570,6 +575,11 @@ def determineConfigs(currEqList, currConfigList, masterConfigList):
         for values in newlyFoundCells:
             configSafe.append(values)
         masterConfigList = determineConfigs(copySafeEq, configSafe, masterConfigList)
+
+    #trying to free some memory
+    copySafeEq = None
+    configSafe = None
+    newlyFoundCells = None
 
     return masterConfigList
 
@@ -627,6 +637,10 @@ def determineExpectedSquares(probabilities):
         copyMineEq = removeCellFromAllEquations(cell, True, copyMineEq)
         copyMineEq = SolveConstraintEquations2(copyMineEq)
         newlyFoundCells, copyMineEq, hasContradiction = findNewSafeOrMines2(copyMineEq)
+
+        #trying to free some memory
+        copyMineEq = None
+
         if(hasContradiction == False):
             exFromMine = len(newlyFoundCells)
 
@@ -634,6 +648,10 @@ def determineExpectedSquares(probabilities):
         copySafeEq = removeCellFromAllEquations(cell, False, copySafeEq)
         copySafeEq = SolveConstraintEquations2(copySafeEq)
         newlyFoundCells, copySafeEq, hasContradiction = findNewSafeOrMines2(copySafeEq)
+
+        #trying to free some memory
+        copySafeEq = None
+
         if(hasContradiction == False):
             exFromSafe = len(newlyFoundCells)
         if cell not in probabilities.keys():
