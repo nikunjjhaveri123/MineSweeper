@@ -124,9 +124,6 @@ def simulateTurn():
             if(foundNewCells == True):
                 #print("FOUND STUFF USING EQUATIONS")
                 QCells, areSafe = findNeighboringSafesOrMines(cell)
-                if(len(QCells) > 1):
-                    queriedCell = random.choice(tuple(remainingCells))
-                    unknownSqCount += 1
             #Could not find any cells that can conclusively be identified as safe
             #Thus, we are choosing at random from the remainingCells set
             else:
