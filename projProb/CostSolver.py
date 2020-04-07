@@ -26,6 +26,7 @@ remainingCells = set()
 minesFound = 0
 minesSafelyFound = 0
 allEquations = list()
+firstTurn = True
 
 def main():
     global board, safeCells, remainingCells, minesFound
@@ -39,10 +40,14 @@ def main():
 
 def initialize(d, n):
 
-    global board, safeCells, remainingCells, minesSafelyFound, minesFound
+    global board, safeCells, remainingCells, minesSafelyFound, minesFound, firstTurn, allEquations
 
+    safeCells = set()
+    remainingCells = set()
     minesFound = 0
     minesSafelyFound = 0
+    allEquations = list()
+    firstTurn = True
 
     board = Board(d, n)
     for i in range(0, board.d*board.d):
@@ -70,16 +75,15 @@ def solve():
     return minesSafelyFound, minesFound
 
 def simulateTurn():
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations, firstTurn
 
     queriedCell  = -1
     QCells = []
     areSafe = False
     #drawBoard()
-    if(len(safeCells) == 0):
-        print("Randomly picking. Safe cells: ", end = "")
-        print(str(safeCells))
-        queriedCell = random.randint(0, board.d*board.d-1)
+    if(firstTurn):
+        queriedCell = random.choice(tuple(remainingCells))
+        firstTurn = False
     else:
 
         foundOne = False

@@ -29,6 +29,7 @@ minesFound = 0
 minesSafelyFound = 0
 allEquations = list()
 unknownSqCount = 0
+firstTurn = True
 
 def main():
     global board, safeCells, remainingCells, minesFound
@@ -42,11 +43,15 @@ def main():
 
 def initialize(d, n):
 
-    global board, safeCells, remainingCells, minesSafelyFound, minesFound, unknownSqCount
+    global board, safeCells, remainingCells, minesSafelyFound, minesFound, unknownSqCount, allEquations
 
+    safeCells = set()
+    remainingCells = set()
     minesFound = 0
     minesSafelyFound = 0
+    allEquations = list()
     unknownSqCount = 0
+    firstTurn = True
 
     board = Board(d, n)
     for i in range(0, board.d*board.d):
@@ -78,14 +83,15 @@ def solve():
     return minesSafelyFound, unknownSqCount
 
 def simulateTurn():
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound, unknownSqCount
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, unknownSqCount, firstTurn
 
     queriedCell  = -1
     QCells = []
     areSafe = False
-    if(len(safeCells) == 0):
-        queriedCell = random.randint(0, board.d*board.d-1)
+    if(firstTurn):
+        queriedCell = random.choice(tuple(remainingCells))
         unknownSqCount += 1
+        firstTurn = False
     else:
         #printAllEquations()
         foundOne = False
@@ -117,7 +123,10 @@ def simulateTurn():
             foundNewCells = SolveConstraintEquations()
             if(foundNewCells == True):
                 #print("FOUND STUFF USING EQUATIONS")
-                return
+                QCells, areSafe = findNeighboringSafesOrMines(cell)
+                if(len(QCells) > 1):
+                    queriedCell = random.choice(tuple(remainingCells))
+                    unknownSqCount += 1
             #Could not find any cells that can conclusively be identified as safe
             #Thus, we are choosing at random from the remainingCells set
             else:
@@ -236,8 +245,8 @@ def openCell(cellNum, safelyIdentified):
 
     if(board.layout[cellRow][cellCol].shown == True):
         #Error catching, don't remove
-        #print("There may be a problem here. openCell() is being called more than once on cellNum: " + str(cellNum))
-        #print("ENDING OPENCELL() ABRUPTLY")
+        print("There may be a problem here. openCell() is being called more than once on cellNum: " + str(cellNum))
+        print("ENDING OPENCELL() ABRUPTLY")
         return
     board.layout[cellRow][cellCol].shown = True
     #print("OPENING CELL: " + str(cellNum))
@@ -253,13 +262,13 @@ def openCell(cellNum, safelyIdentified):
             removeCellFromAllEquations(cellNum, True)
     else:
         #cell is not a mines
+        removeCellFromAllEquations(cellNum, False)
         if(board.layout[cellRow][cellCol].clue != 0):
             #you don't need to add cells with clue = 0 to safe cells because
             #safe cells is only used to pick the next cell to query. It is never
             #useful to query on a cell whose clue is zero because when we do find
             #such a cell, we already dfs on all its neighboring zeros
             createConstraintEquation(cellNum)
-            removeCellFromAllEquations(cellNum, False)
             safeCells.add(cellNum)
     remainingCells.remove(cellNum)
     updateNeighbors(cellNum)
@@ -433,18 +442,17 @@ def findNewSafeOrMines():
     return changes
 
 def removeCellFromAllEquations(cellNum, isMine):
-    global allEquations, board
-    for eq in allEquations.copy():
+    global board, allEquations
+    for eq in allEquations:
         if cellNum in eq[0]:
             #print("Removing cell " + str(cellNum) + " From equation: " + str(eq[0]))
             eq[0].remove(cellNum)
             if isMine:
                 #print("Cell was a mine, substracting 1")
                 eq[1] -=1
-            if(len(eq[0]) == 0):
-                if(eq not in allEquations):
-                    continue
-                allEquations.remove(eq)
+    for eq_ in allEquations.copy():
+        if(len(eq_[0]) == 0):
+            allEquations.remove(eq_)
 
 
 #Prints out all the current constraint equations for the board

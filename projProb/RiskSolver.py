@@ -24,11 +24,11 @@ board = Board(0,0)
 #2d array element (0,4). 6 would be (1,2)
 safeCells = set()
 remainingCells = set()
-borderingCells = set()
 minesFound = 0
 minesSafelyFound = 0
 allEquations = list()
 unknownSqCount = 0
+firstTurn = True
 
 def main():
     global board, safeCells, remainingCells, minesFound
@@ -42,14 +42,14 @@ def main():
 
 def initialize(d, n):
 
-    global board, safeCells, remainingCells, minesSafelyFound, minesFound, unknownSqCount
+    global board, safeCells, remainingCells, minesSafelyFound, minesFound, firstTurn, allEquations, unknownSqCount
 
     safeCells = set()
     remainingCells = set()
-    borderingCells = set()
     minesFound = 0
     minesSafelyFound = 0
     allEquations = list()
+    firstTurn = True
     unknownSqCount = 0
 
     board = Board(d, n)
@@ -78,17 +78,16 @@ def solve():
     return minesSafelyFound, unknownSqCount
 
 def simulateTurn():
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations, unknownSqCount
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations, unknownSqCount, firstTurn
 
     queriedCell  = -1
     QCells = []
     areSafe = False
     #drawBoard()
-    if(len(safeCells) == 0):
-        print("Randomly picking. Safe cells: ", end = "")
-        print(str(safeCells))
-        queriedCell = random.randint(0, board.d*board.d-1)
+    if(firstTurn):
+        queriedCell = random.choice(tuple(remainingCells))
         unknownSqCount += 1
+        firstTurn = False
     else:
 
         foundOne = False
@@ -249,7 +248,8 @@ def getNeighborIndices(cellNum):
 # clue is a -1, then minesSafelyFound will not be incremented. safelIdentified doesn't
 # matter if the cell is not a mine
 def openCell(cellNum, safelyIdentified):
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations, borderingCells
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations
+
     cellRow, cellCol = getCoordinates(cellNum)
 
     if(board.layout[cellRow][cellCol].shown == True):
@@ -279,8 +279,6 @@ def openCell(cellNum, safelyIdentified):
             createConstraintEquation(cellNum)
             safeCells.add(cellNum)
     remainingCells.remove(cellNum)
-    if cellNum in borderingCells:
-        borderingCells.remove(cellNum)
     updateNeighbors(cellNum)
     #printAllEquations()
 
@@ -358,7 +356,7 @@ def DFSOnZeros(cellNum):
 #Should take in a cell Number and create a constraint equation for that cell based on its neighbors.
 #The new equation will be added to the global list of all the equations.
 def createConstraintEquation(cellNum):
-    global board, allEquations, borderingCells
+    global board, allEquations
     row, col = getCoordinates(cellNum)
     NeighborsList = getNeighborIndices(cellNum)
     for icell in NeighborsList:
@@ -381,8 +379,6 @@ def createConstraintEquation(cellNum):
             continue
 
         board.layout[row][col].addConstraintVariable(icell)
-        if icell not in borderingCells:
-            borderingCells.add(icell)
 
     #Adding the newly created equation for a cell to the global list of equations
     allEquations.append([board.layout[row][col].constraintEquation, board.layout[row][col].constraintValue])
@@ -625,7 +621,7 @@ def calculateProbabliites(configList):
     return allCells
 
 def determineExpectedSquares(probabilities):
-    global borderingCells, allEquations
+    global allEquations
     expectedSquares = {}
     maxValue = -1
     cellToPick = -1
