@@ -639,7 +639,7 @@ def calculateProbabliites(configList):
                 #print("Cell chosen: " + str(cell))
                 return cell
 
-
+    #Choose any cell with the highest expectedSquares
     #print("choosing condition 4")
     return determineExpectedSquares(allCells)
 
