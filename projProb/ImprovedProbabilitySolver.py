@@ -130,7 +130,7 @@ def simulateTurn():
                 masterConfigList = determineConfigs(allEquations, configList, masterConfigList)
                 #print("SIZE OF MASTER LIST: " + str(len(masterConfigList)))
                 queriedCell = calculateProbabliites(masterConfigList)
-                print("QUERIED CELL: " + str(queriedCell))
+                #print("QUERIED CELL: " + str(queriedCell))
 
                 #print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
                 # if(queriedCell == -1):
