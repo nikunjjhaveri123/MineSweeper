@@ -130,6 +130,7 @@ def simulateTurn():
                 masterConfigList = determineConfigs(allEquations, configList, masterConfigList)
                 #print("SIZE OF MASTER LIST: " + str(len(masterConfigList)))
                 queriedCell = calculateProbabliites(masterConfigList)
+                print("QUERIED CELL: " + str(queriedCell))
 
                 #print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
                 # if(queriedCell == -1):
@@ -606,19 +607,42 @@ def calculateProbabliites(configList):
     lowestProbability = 1;
     for cell in allCells:
         allCells[cell] = float(allCells[cell] / totalConfig)
-        if allCells[cell] < lowestProbability:
-            lowestProbability = allCells[cell]
-            cellToPick = cell
-            foundProbableCell = True
+        # if allCells[cell] < lowestProbability:
+        #     lowestProbability = allCells[cell]
+        #     cellToPick = cell
+        #     foundProbableCell = True
 
-    if (lowestProbability > 0.5 or cellToPick == -1):
-        return determineExpectedSquares(allCells)
-    #     print("ALL PROBS GREATER THAN 0.5")
-    #     for i in range (0,board.d * board.d):
-    #         if(i in remainingCells and i not in allCells):
-    #             foundProbableCell = True
-    #             cellToPick = i
-    #             break
+    temp = min(allCells.values())
+    minProbs = [key for key in allCells if allCells[key] == temp]
+
+    #if lowest probaility cell is below 0.5 then choose it
+    if (len(minProbs) == 1 and allCells[minProbs[0]] <= 0.5):
+        #print("choosing condition 1")
+        return minProbs[0]
+
+    #if multiple cells with same prob all below 0.5 then choose one with highest expectedSquares
+    elif(len(minProbs) > 1 and allCells[minProbs[0]] <= 0.5):
+        #print("choosing condition 2")
+        #Filters out the original dict of probabilties with only the minimum values instead
+        minProbsDict = {}
+        for cell in minProbs:
+            minProbsDict[cell] = allCells[cell]
+        return determineExpectedSquares(minProbsDict)
+
+    #if all cells have probs greater than 0.5 choose a random inactive unkown
+    elif (allCells[minProbs[0]] > 0.5):
+        #print("choosing condition 3")
+        #print("ALL PROBS GREATER THAN 0.5")
+        for cell in remainingCells:
+            #print("Cell in remaining: " + str(cell))
+            if(cell not in allCells):
+                #print("Cell chosen: " + str(cell))
+                return cell
+
+
+    #print("choosing condition 4")
+    return determineExpectedSquares(allCells)
+
     #
     # if(foundProbableCell == False):
     #     print("CHOOSING ANY REMAINING CELL")
@@ -626,7 +650,7 @@ def calculateProbabliites(configList):
     #         cellToPick = cell
     #         break
     #print("SIZE FROM DETEMRINING PROBS: " + str(len(allCells)))
-    return cellToPick
+    #return cellToPick
 
 def determineExpectedSquares(probabilities):
     global allEquations
