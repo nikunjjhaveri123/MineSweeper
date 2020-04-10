@@ -41,7 +41,7 @@ def main():
 
 def initialize(d, n):
 
-    global board, safeCells, remainingCells, minesSafelyFound, minesFound, firstTurn, allEquations
+    global board, safeCells, remainingCells, minesSafelyFound, minesFound, firstTurn, allEquations, unknownSqCount
 
     safeCells = set()
     remainingCells = set()
