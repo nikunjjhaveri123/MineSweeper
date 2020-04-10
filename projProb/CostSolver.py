@@ -71,6 +71,7 @@ def solve():
 
 
     print("Total number of Mines Safely Identified: " + str(minesSafelyFound) + " Out of: " + str(board.n))
+    print("Total number of Squares unknowingly stepped on: " + str(unknownSqCount))
 
     return minesSafelyFound, minesFound
 
