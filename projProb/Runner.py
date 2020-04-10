@@ -10,6 +10,9 @@ import time
 #This class is used to create and run tests for the minimizing cost and risk solvers vs the basic mine sweeper solver agent from project 2.
 def main():
 
+    bonusMinCostInRisk()
+    #bonusMinRiskInCost()
+
     # #Places results for the basic solver in the basicAgentPErformance.csv file
     # with open('basicAgentPerformance.csv', 'w') as file:
     # #with open('basicAgentRiskPerformance.csv', 'w') as file:
@@ -115,38 +118,103 @@ def main():
     #
     #       mineDensity += 0.05
 
-    #Places results for the improved probability solver in the improvedProbAgentPerformance.csv file
-    with open('improvedProbAgentPerformance.csv', 'a') as file:
-        writer = csv.writer(file)
-        #writer.writerow(["Mine Density", "Average Cost"])
+    # #Places results for the improved probability solver in the improvedProbAgentPerformance.csv file
+    # with open('improvedProbAgentPerformance.csv', 'a') as file:
+    #     writer = csv.writer(file)
+    #     #writer.writerow(["Mine Density", "Average Cost"])
+    #
+    #     dimension = 15 #dimension of HARD Minesweeper board
+    #     mineDensity = 0.55 # starting mine density
+    #
+    #     while mineDensity <= 0.95: # will test mine densities up to a density of 0.9
+    #
+    #       iterations = 5
+    #
+    #       totalMines = 0
+    #       totalCost = 0
+    #
+    #       for trial in range(0,iterations): #Run trials with each mine density 10 times
+    #
+    #         no_mines = int(math.ceil(dimension*dimension*mineDensity))
+    #
+    #         minesSafelyFound, unknownSqCount = ImprovedProbabilitySolver.initialize(dimension, no_mines) # will utilize the basic solver agent in the Solver.py class to geenrate the board and solve it and return the results
+    #
+    #         #writer.writerow([mineDensity, no_mines-minesSafelyFound])
+    #
+    #         totalCost += no_mines-minesSafelyFound #calculate the total cost over all tests for a certain density
+    #         #totalMines += minesFound #calculate the total number of mines found over all tests for a certain density
+    #
+    #       averageFinalCost = totalCost / iterations #caluculate average final cost
+    #
+    #       writer.writerow([mineDensity, averageFinalCost]) #write data entry into csv file
+    #
+    #       mineDensity += 0.05
 
-        dimension = 15 #dimension of HARD Minesweeper board
-        mineDensity = 0.55 # starting mine density
+    def bonusMinRiskInCost():
+        #Places results for the minimizing cost solver in the minCostAgentPerformance.csv file
+        with open('minRiskInCostPerformance.csv', 'w+') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Mine Density", "Average Cost"])
 
-        while mineDensity <= 0.95: # will test mine densities up to a density of 0.9
+            dimension = 15 #dimension of HARD Minesweeper board
+            mineDensity = 0.05 # starting mine density
 
-          iterations = 5
+            while mineDensity <= 0.95: # will test mine densities up to a density of 0.9
 
-          totalMines = 0
-          totalCost = 0
+              iterations = 10
 
-          for trial in range(0,iterations): #Run trials with each mine density 10 times
+              totalMines = 0
+              totalCost = 0
 
-            no_mines = int(math.ceil(dimension*dimension*mineDensity))
+              for trial in range(0,iterations): #Run trials with each mine density 10 times
 
-            minesSafelyFound, unknownSqCount = ImprovedProbabilitySolver.initialize(dimension, no_mines) # will utilize the basic solver agent in the Solver.py class to geenrate the board and solve it and return the results
+                no_mines = int(math.ceil(dimension*dimension*mineDensity))
 
-            #writer.writerow([mineDensity, no_mines-minesSafelyFound])
+                minesSafelyFound, minesFound = RiskSolver.initialize(dimension, no_mines) # will utilize the basic solver agent in the Solver.py class to geenrate the board and solve it and return the results
 
-            totalCost += no_mines-minesSafelyFound #calculate the total cost over all tests for a certain density
-            #totalMines += minesFound #calculate the total number of mines found over all tests for a certain density
+                #writer.writerow([mineDensity, no_mines-minesSafelyFound])
 
-          averageFinalCost = totalCost / iterations #caluculate average final cost
+                totalCost += no_mines-minesSafelyFound #calculate the total cost over all tests for a certain density
+                #totalMines += minesFound #calculate the total number of mines found over all tests for a certain density
 
-          writer.writerow([mineDensity, averageFinalCost]) #write data entry into csv file
+              averageFinalCost = totalCost / iterations #caluculate average final cost
 
-          mineDensity += 0.05
+              writer.writerow([mineDensity, averageFinalCost]) #write data entry into csv file
 
+              mineDensity += 0.05
+
+      def bonusMinCostInRisk():
+          #Places results for the minimizing risk solver in the minCostAgentPerformance.csv file
+          with open('minCostInRiskPerformance.csv', 'w+') as file:
+              writer = csv.writer(file)
+              writer.writerow(["Mine Density", "Average Cost"])
+
+              dimension = 15 #dimension of HARD Minesweeper board
+              mineDensity = 0.05 # starting mine density
+
+              while mineDensity <= 0.95: # will test mine densities up to a density of 0.9
+
+                iterations = 10
+
+                totalMines = 0
+                totalCost = 0
+
+                for trial in range(0,iterations): #Run trials with each mine density 10 times
+
+                  no_mines = int(math.ceil(dimension*dimension*mineDensity))
+
+                  minesSafelyFound, unknownSqCount = CostSolver.initialize(dimension, no_mines) # will utilize the basic solver agent in the Solver.py class to geenrate the board and solve it and return the results
+
+                  #writer.writerow([mineDensity, no_mines-minesSafelyFound])
+
+                  totalCost += unknownSqCount #calculate the total cost over all tests for a certain density
+                  #totalMines += minesFound #calculate the total number of mines found over all tests for a certain density
+
+                averageFinalCost = totalCost / iterations #caluculate average final cost
+
+                writer.writerow([mineDensity, averageFinalCost]) #write data entry into csv file
+
+                mineDensity += 0.05
 
 if __name__ == "__main__":
     main()
