@@ -49,7 +49,7 @@ def initialize(d, n):
     minesSafelyFound = 0
     allEquations = list()
     firstTurn = True
-    unknownSqCount
+    unknownSqCount = 0
 
     board = Board(d, n)
     for i in range(0, board.d*board.d):
@@ -75,7 +75,7 @@ def solve():
     print("Total number of Mines Safely Identified: " + str(minesSafelyFound) + " Out of: " + str(board.n))
     print("Total number of Squares unknowingly stepped on: " + str(unknownSqCount))
 
-    return minesSafelyFound, minesFound
+    return minesSafelyFound, unknownSqCount
 
 def simulateTurn():
     global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations, firstTurn, unknownSqCount

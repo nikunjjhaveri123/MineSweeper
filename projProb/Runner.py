@@ -187,12 +187,12 @@ def bonusMinCostInRisk():
   #Places results for the minimizing risk solver in the minCostAgentPerformance.csv file
   with open('minCostInRiskPerformance.csv', 'a') as file:
       writer = csv.writer(file)
-      #writer.writerow(["Mine Density", "Average Cost"])
+      writer.writerow(["Mine Density", "Average Cost"])
 
       dimension = 15 #dimension of HARD Minesweeper board
-      mineDensity = 0.70 # starting mine density
+      mineDensity = 0.05 # starting mine density
 
-      while mineDensity <= 0.95: # will test mine densities up to a density of 0.9
+      while mineDensity <= 0.65: # will test mine densities up to a density of 0.9
 
         iterations = 5
 
