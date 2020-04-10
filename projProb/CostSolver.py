@@ -27,6 +27,7 @@ minesFound = 0
 minesSafelyFound = 0
 allEquations = list()
 firstTurn = True
+unknownSqCount = 0
 
 def main():
     global board, safeCells, remainingCells, minesFound
@@ -48,6 +49,7 @@ def initialize(d, n):
     minesSafelyFound = 0
     allEquations = list()
     firstTurn = True
+    unknownSqCount
 
     board = Board(d, n)
     for i in range(0, board.d*board.d):
@@ -65,7 +67,7 @@ def getCoordinates(num):
 
 def solve():
     # write method to solve minesweeper board here
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, unknownSqCount
     while(len(remainingCells) > 0):
         simulateTurn()
 
@@ -76,7 +78,7 @@ def solve():
     return minesSafelyFound, minesFound
 
 def simulateTurn():
-    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations, firstTurn
+    global board, safeCells, remainingCells, minesFound, minesSafelyFound, allEquations, firstTurn, unknownSqCount
 
     queriedCell  = -1
     QCells = []
@@ -84,6 +86,7 @@ def simulateTurn():
     #drawBoard()
     if(firstTurn):
         queriedCell = random.choice(tuple(remainingCells))
+        unknownSqCount += 1
         firstTurn = False
     else:
 
@@ -125,9 +128,11 @@ def simulateTurn():
                 masterConfigList = list()
                 configList = determineConfigs(allEquations, configList, masterConfigList)
                 queriedCell = calculateProbabliites(configList)
+                unknownSqCount += 1
                 #print("PROBABILITIESSSS, CELL CHOSEN: " + str(queriedCell))
             else:
                 queriedCell = random.choice(tuple(remainingCells))
+                unknownSqCount += 1
 
     if(queriedCell > -1):
         #we don't have a list of cells to query, just one
